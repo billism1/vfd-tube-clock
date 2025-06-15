@@ -2,6 +2,8 @@
 
 A WiFi-enabled VFD (Vacuum Fluorescent Display) tube clock built with the Seeeduino ESP32-C3 microcontroller, designed for the IV-21 VFD tube with web-based control interface.
 
+Note that I am currently making PCB design modifications. The below photos and video are from the first few PCBs I had printed for testing the initial design. The main board's KiCad project does not currently match this due to some changes I am in the process of making. Though, the software flashed to the ESP32 will work with the old and the new PCB designs.
+
 ## Project Photos
 
 <div align="center">
@@ -38,7 +40,7 @@ Vacuum Fluorescent Displays (VFDs) work by using phosphor-coated segments that g
 - **Future:** Should be aasily modifiable for IV-27 VFD tube (13 digits)
 
 **Microcontrollers:**
-- **Primary:** Seeeduino ESP32-C3 (PCB designed specifically for this module)
+- **Primary:** Seeeduino ESP32-C3. The PCB is designed specifically for this module. You can use surface mount soldering or pin headers.
 - **Other ESP32 variants:** Code can be adapted, but PCB would need modification/redesign
 
 ### Key Components
@@ -109,13 +111,13 @@ A fun "gag" feature that rapidly displays random words with glitchy effects, cre
 
 This project was heavily inspired by and references the excellent work of:
 
-- **[Tiny IV-21 VFD Clock](https://hackaday.io/project/167749-tiny-iv-21-vfd-clock)** - Original design inspiration
-- **[Tiny IV-21 VFD Clock with ESP32](https://hackaday.io/project/202799-tiny-iv-21-vfd-clock-with-esp32)** - ESP32 implementation reference
-- **[GitHub Repository](https://github.com/cinchcircuits/iv-21-clock-esp32)** - Code and circuit references
+- **[Tiny IV-21 VFD Clock](https://hackaday.io/project/167749-tiny-iv-21-vfd-clock)** - Original design inspiration. Uses an Atmega328P MCU and RTC hardware.
+- **[Tiny IV-21 VFD Clock with ESP32](https://hackaday.io/project/202799-tiny-iv-21-vfd-clock-with-esp32)** - ESP32 implementation inspired from the above mentioned "Tiny IV-21 VFD Clock" project. Excludes the external RTC (real-time clock) component and uses wifi and Internet for automatic time acquisition.
+- **[GitHub Repository](https://github.com/cinchcircuits/iv-21-clock-esp32)** - GitHub repo for the above mentioned "Tiny IV-21 VFD Clock with ESP32" project.
 
 Special thanks to the creators of these projects for sharing their knowledge and making this hobby accessible to others.
 
-And... yes - I used an LLM to create this readme file. But I did make manual edits. =)
+And... yes - I used an LLM (claude.ai) to create this readme file from key points. But I did make manual edits. =)
 
 ## Getting Started
 
