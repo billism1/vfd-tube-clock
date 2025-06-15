@@ -1,0 +1,11 @@
+Plotted to 'C:\Users\billi\Source\repos\iv21-vfd-clock-with-esp32\pcb\main-board\gerber-output\iv21-vfd-clock-with-esp32-F_Cu.gbr'.
+Plotted to 'C:\Users\billi\Source\repos\iv21-vfd-clock-with-esp32\pcb\main-board\gerber-output\iv21-vfd-clock-with-esp32-B_Cu.gbr'.
+Plotted to 'C:\Users\billi\Source\repos\iv21-vfd-clock-with-esp32\pcb\main-board\gerber-output\iv21-vfd-clock-with-esp32-F_Paste.gbr'.
+Plotted to 'C:\Users\billi\Source\repos\iv21-vfd-clock-with-esp32\pcb\main-board\gerber-output\iv21-vfd-clock-with-esp32-B_Paste.gbr'.
+Plotted to 'C:\Users\billi\Source\repos\iv21-vfd-clock-with-esp32\pcb\main-board\gerber-output\iv21-vfd-clock-with-esp32-F_Silkscreen.gbr'.
+Plotted to 'C:\Users\billi\Source\repos\iv21-vfd-clock-with-esp32\pcb\main-board\gerber-output\iv21-vfd-clock-with-esp32-B_Silkscreen.gbr'.
+Plotted to 'C:\Users\billi\Source\repos\iv21-vfd-clock-with-esp32\pcb\main-board\gerber-output\iv21-vfd-clock-with-esp32-F_Mask.gbr'.
+Plotted to 'C:\Users\billi\Source\repos\iv21-vfd-clock-with-esp32\pcb\main-board\gerber-output\iv21-vfd-clock-with-esp32-B_Mask.gbr'.
+Plotted to 'C:\Users\billi\Source\repos\iv21-vfd-clock-with-esp32\pcb\main-board\gerber-output\iv21-vfd-clock-with-esp32-Edge_Cuts.gbr'.
+Created Gerber job file 'C:\Users\billi\Source\repos\iv21-vfd-clock-with-esp32\pcb\main-board\gerber-output\iv21-vfd-clock-with-esp32-job.gbrjob'.
+Info: Done.

@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "*.h": "cpp",
+        "string": "cpp",
+        "functional": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp",
+        "vector": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "span": "cpp",
+        "cmath": "cpp",
+        "*.example": "cpp"
+    }
+}

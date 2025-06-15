@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "IV-21VFDsub")(type "KiCad")(uri "$(KIPRJMOD)/IV-21VFDsub.pretty")(options "")(descr ""))
+)
