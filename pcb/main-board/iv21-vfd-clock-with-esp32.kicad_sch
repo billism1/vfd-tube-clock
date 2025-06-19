@@ -4735,11 +4735,11 @@
 		(uuid "0a65a33a-7481-48cc-b9e8-8fd280298fd6")
 	)
 	(no_connect
-		(at 48.26 7.62)
+		(at 48.26 162.56)
 		(uuid "10b7197a-d253-4416-aff3-1d7889cc09c7")
 	)
 	(no_connect
-		(at 25.4 27.94)
+		(at 25.4 182.88)
 		(uuid "33679373-82fd-454a-a8cb-ee75889a4d46")
 	)
 	(no_connect
@@ -4751,7 +4751,7 @@
 		(uuid "36841fe7-0227-4e56-8ac4-5c0d280f5f2b")
 	)
 	(no_connect
-		(at 48.26 2.54)
+		(at 48.26 157.48)
 		(uuid "553bc5dc-0f36-40a5-bf62-e7a9d78e2a27")
 	)
 	(no_connect
@@ -4763,11 +4763,11 @@
 		(uuid "7b58e936-1be4-4fbc-bea4-b98fa5314a4c")
 	)
 	(no_connect
-		(at 48.26 -5.08)
+		(at 48.26 149.86)
 		(uuid "af42ee1c-7356-4c69-bbc5-13def1913fb6")
 	)
 	(no_connect
-		(at 48.26 -10.16)
+		(at 48.26 144.78)
 		(uuid "b9bf52a5-f804-4de9-a75b-14a27154db4c")
 	)
 	(no_connect
@@ -5740,7 +5740,7 @@
 	)
 	(wire
 		(pts
-			(xy 139.7 17.78) (xy 139.7 21.59)
+			(xy 54.61 172.72) (xy 54.61 176.53)
 		)
 		(stroke
 			(width 0)
@@ -5960,7 +5960,7 @@
 	)
 	(wire
 		(pts
-			(xy 48.26 -2.54) (xy 55.88 -2.54)
+			(xy 48.26 152.4) (xy 55.88 152.4)
 		)
 		(stroke
 			(width 0)
@@ -6519,7 +6519,7 @@
 		(uuid "f9acc2d6-4774-4da6-9f60-8a88db47b221")
 	)
 	(label "5V"
-		(at 53.34 -2.54 0)
+		(at 53.34 152.4 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6529,7 +6529,7 @@
 		(uuid "00f6b387-4a1c-4c5b-aeee-73654dbcd325")
 	)
 	(label "5V"
-		(at 139.7 19.05 0)
+		(at 54.61 173.99 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6800,7 +6800,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 33.02 27.94 0)
+		(at 33.02 182.88 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6809,7 +6809,7 @@
 		(fields_autoplaced yes)
 		(uuid "14b04860-f003-4b1d-8b23-676bb1d9de3c")
 		(property "Reference" "#PWR020"
-			(at 33.02 34.29 0)
+			(at 33.02 189.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6818,7 +6818,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 33.02 33.02 0)
+			(at 33.02 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6826,7 +6826,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 33.02 27.94 0)
+			(at 33.02 182.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6835,7 +6835,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 33.02 27.94 0)
+			(at 33.02 182.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6844,7 +6844,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 33.02 27.94 0)
+			(at 33.02 182.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7233,7 +7233,7 @@
 	)
 	(symbol
 		(lib_id "Connector:USB_C_Plug_USB2.0")
-		(at 33.02 5.08 0)
+		(at 33.02 160.02 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7242,7 +7242,7 @@
 		(fields_autoplaced yes)
 		(uuid "2e39fdc7-4cac-4d73-9251-78830f5a3567")
 		(property "Reference" "P1"
-			(at 33.02 -16.51 0)
+			(at 33.02 138.43 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7250,7 +7250,7 @@
 			)
 		)
 		(property "Value" "USB_C_Plug_USB2.0"
-			(at 33.02 -13.97 0)
+			(at 33.02 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7258,7 +7258,7 @@
 			)
 		)
 		(property "Footprint" "Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal"
-			(at 36.83 5.08 0)
+			(at 36.83 160.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7267,7 +7267,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.usb.org/sites/default/files/documents/usb_type-c.zip"
-			(at 36.83 5.08 0)
+			(at 36.83 160.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7276,7 +7276,7 @@
 			)
 		)
 		(property "Description" "USB 2.0-only Type-C Plug connector"
-			(at 33.02 5.08 0)
+			(at 33.02 160.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7677,7 +7677,7 @@
 	)
 	(symbol
 		(lib_id "Device:C_Polarized_US")
-		(at 139.7 25.4 0)
+		(at 54.61 180.34 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7685,7 +7685,7 @@
 		(dnp no)
 		(uuid "54329149-ca84-4217-8767-213d2e33bcff")
 		(property "Reference" "C3"
-			(at 142.494 24.13 0)
+			(at 57.404 179.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7694,7 +7694,7 @@
 			)
 		)
 		(property "Value" "100uF"
-			(at 142.494 26.67 0)
+			(at 57.404 181.61 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7703,7 +7703,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:CP_Elec_8x10.5"
-			(at 139.7 25.4 0)
+			(at 54.61 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7712,7 +7712,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 139.7 25.4 0)
+			(at 54.61 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7721,7 +7721,7 @@
 			)
 		)
 		(property "Description" "Polarized capacitor, US symbol"
-			(at 139.7 25.4 0)
+			(at 54.61 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8649,7 +8649,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 139.7 29.21 0)
+		(at 54.61 184.15 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8658,7 +8658,7 @@
 		(fields_autoplaced yes)
 		(uuid "7a648868-babe-4318-9ed3-bdb7bdbb4b2c")
 		(property "Reference" "#PWR016"
-			(at 139.7 35.56 0)
+			(at 54.61 190.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8667,7 +8667,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 139.7 34.29 0)
+			(at 54.61 189.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8675,7 +8675,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 139.7 29.21 0)
+			(at 54.61 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8684,7 +8684,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 139.7 29.21 0)
+			(at 54.61 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8693,7 +8693,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 139.7 29.21 0)
+			(at 54.61 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
