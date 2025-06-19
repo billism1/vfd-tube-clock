@@ -7711,7 +7711,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.mouser.com/datasheet/2/40/kyocera_avx_aha_series-2887216.pdf"
 			(at 54.61 180.34 0)
 			(effects
 				(font
@@ -7721,6 +7721,24 @@
 			)
 		)
 		(property "Description" "Polarized capacitor, US symbol"
+			(at 54.61 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Voltage Rating" "35V DC"
+			(at 54.61 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Product URL" "https://www.mouser.com/ProductDetail/581-AHA0810101M035R"
 			(at 54.61 180.34 0)
 			(effects
 				(font
@@ -9914,7 +9932,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.mouser.com/datasheet/2/40/kyocera_avx_aha_series-2887216.pdf"
 			(at 158.75 161.29 0)
 			(effects
 				(font
@@ -9924,6 +9942,24 @@
 			)
 		)
 		(property "Description" "Polarized capacitor, US symbol"
+			(at 158.75 161.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Voltage Rating" "63V DC"
+			(at 158.75 161.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Product URL" "https://www.mouser.com/ProductDetail/581-AHA0810330M063R"
 			(at 158.75 161.29 0)
 			(effects
 				(font
