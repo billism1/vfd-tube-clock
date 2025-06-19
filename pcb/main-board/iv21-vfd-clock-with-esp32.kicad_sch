@@ -7266,7 +7266,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.usb.org/sites/default/files/documents/usb_type-c.zip"
+		(property "Datasheet" "https://www.mouser.com/datasheet/2/1628/uj20_c_h_g_smt_1_p16_tr-3511223.pdf"
 			(at 36.83 160.02 0)
 			(effects
 				(font
@@ -7276,6 +7276,15 @@
 			)
 		)
 		(property "Description" "USB 2.0-only Type-C Plug connector"
+			(at 33.02 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Product URL" "https://www.mouser.com/ProductDetail/179-UJ20CHGSMT1P16TR"
 			(at 33.02 160.02 0)
 			(effects
 				(font
@@ -7542,7 +7551,7 @@
 		(dnp no)
 		(uuid "458a0c3d-f179-4b4c-8257-700b9999d215")
 		(property "Reference" "RV2"
-			(at 129.54 157.4799 0)
+			(at 129.032 161.29 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7551,13 +7560,12 @@
 			)
 		)
 		(property "Value" "100K"
-			(at 149.606 170.18 0)
+			(at 129.54 163.5761 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify right)
-				(hide yes)
 			)
 		)
 		(property "Footprint" "Potentiometer_THT:Potentiometer_Vishay_T93XA_Horizontal"
