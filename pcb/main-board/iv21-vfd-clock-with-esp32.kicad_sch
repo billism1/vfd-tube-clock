@@ -8338,7 +8338,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Inductor_THT:L_Radial_D12.0mm_P5.00mm_Fastron_11P"
+		(property "Footprint" "Inductor_THT:L_Radial_D7.5mm_P3.50mm_Fastron_07P"
 			(at 86.36 161.29 0)
 			(effects
 				(font
