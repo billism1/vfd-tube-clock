@@ -54,32 +54,20 @@
       "diff_pair_dimensions": [],
       "drc_exclusions": [
         [
-          "hole_clearance|45630000|24930000|16fc13f4-00ef-4af4-9ab0-cf34cf1900ee|550e6973-0c8f-402c-84d2-9543e34c177d",
-          "Violation entirely contained in provided footprint."
+          "hole_clearance|45630000|24930000|550e6973-0c8f-402c-84d2-9543e34c177d|8f7bd57f-dccf-470c-b6f1-e973777e4a78",
+          ""
         ],
         [
-          "hole_clearance|45630000|24930000|8f7bd57f-dccf-470c-b6f1-e973777e4a78|550e6973-0c8f-402c-84d2-9543e34c177d",
-          "Violation entirely contained in provided footprint."
-        ],
-        [
-          "hole_clearance|51730000|24930000|423d6cf7-4ead-4687-8372-03b52fa39b36|9ff33ac2-1310-4f35-908a-0dfd9dd47e0d",
-          "Violation entirely contained in provided footprint."
-        ],
-        [
-          "hole_clearance|51730000|24930000|fdb1e016-7c24-47d3-90b3-ad87e58f8a34|9ff33ac2-1310-4f35-908a-0dfd9dd47e0d",
-          "Violation entirely contained in provided footprint."
+          "hole_clearance|51730000|24930000|9ff33ac2-1310-4f35-908a-0dfd9dd47e0d|423d6cf7-4ead-4687-8372-03b52fa39b36",
+          ""
         ],
         [
           "lib_footprint_issues|71380000|30340750|777f2d7d-7195-4938-8934-751d6e5e97de|00000000-0000-0000-0000-000000000000",
           ""
         ],
         [
-          "shorting_items|46130000|24930000|afb5db87-dc74-462a-a75e-6cb5a6589f50|495c224f-ef85-42e4-af3a-bc34a612be13",
-          ""
-        ],
-        [
-          "shorting_items|50930000|24930000|835264a4-8877-4a2f-b15e-4117631f8b2e|bbe57592-941d-41ff-afe4-9ad1174cbce1",
-          "Violation entirely contained in provided footprint."
+          "lib_footprint_mismatch|48680000|21965000|2092acae-4a30-4c47-a6bf-9cdd8af436ea|00000000-0000-0000-0000-000000000000",
+          "I edited it."
         ]
       ],
       "meta": {
