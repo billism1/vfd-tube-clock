@@ -10,3 +10,4 @@ fp-info-cache
 **/~*.kicad_sch.lck
 **/~*.kicad_sch.lck
 firmware/src/credentials.h
+**/~*.kicad_pcb.lck
