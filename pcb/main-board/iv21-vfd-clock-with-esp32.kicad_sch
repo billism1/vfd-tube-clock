@@ -4658,6 +4658,12 @@
 		)
 	)
 	(junction
+		(at 129.54 166.37)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "42c3ccb9-a552-4b11-9e51-033e708c08d5")
+	)
+	(junction
 		(at 181.61 133.35)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4706,12 +4712,6 @@
 		(uuid "aa23d0c2-732e-4400-8b57-de32e604c971")
 	)
 	(junction
-		(at 129.54 173.99)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "c1f61eda-fee8-41ff-b59a-2de1970f195b")
-	)
-	(junction
 		(at 24.13 64.77)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4728,6 +4728,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f1641772-4c3b-4965-9130-a35c745ffa2f")
+	)
+	(junction
+		(at 129.54 173.99)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f2a4f4a8-f79f-4fd9-b765-cdd995a1f275")
 	)
 	(junction
 		(at 20.32 82.55)
@@ -5035,16 +5041,6 @@
 	)
 	(wire
 		(pts
-			(xy 129.54 173.99) (xy 137.16 173.99)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2bfc524f-8572-4ae5-82f4-6ea61ccfd977")
-	)
-	(wire
-		(pts
 			(xy 81.28 186.69) (xy 101.6 186.69)
 		)
 		(stroke
@@ -5162,6 +5158,16 @@
 			(type default)
 		)
 		(uuid "40327237-a742-46ed-937e-6a24efde63ae")
+	)
+	(wire
+		(pts
+			(xy 129.54 173.99) (xy 129.54 176.53)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "412cc260-d0ed-4aa9-b5a7-fd6c9bde852f")
 	)
 	(wire
 		(pts
@@ -5315,7 +5321,7 @@
 	)
 	(wire
 		(pts
-			(xy 151.13 143.51) (xy 151.13 153.67)
+			(xy 151.13 149.86) (xy 151.13 153.67)
 		)
 		(stroke
 			(width 0)
@@ -5352,6 +5358,16 @@
 			(type default)
 		)
 		(uuid "5d53362c-1798-46ac-9648-86b277f110d9")
+	)
+	(wire
+		(pts
+			(xy 133.35 162.56) (xy 133.35 166.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5edeb423-371f-4c44-b9a0-1fe4b8e4a975")
 	)
 	(wire
 		(pts
@@ -5435,13 +5451,23 @@
 	)
 	(wire
 		(pts
-			(xy 129.54 166.37) (xy 132.08 166.37)
+			(xy 129.54 166.37) (xy 133.35 166.37)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "6c172cc1-e655-4d08-8b38-f17eda5ce917")
+	)
+	(wire
+		(pts
+			(xy 111.76 173.99) (xy 129.54 173.99)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6c459e30-3a13-4bf0-b7c8-02cae0b45e9e")
 	)
 	(wire
 		(pts
@@ -5482,16 +5508,6 @@
 			(type default)
 		)
 		(uuid "7004037e-867b-49e4-85ed-5b51c5e89493")
-	)
-	(wire
-		(pts
-			(xy 129.54 173.99) (xy 129.54 176.53)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "70594818-e4d2-4321-a941-6735ff43c07e")
 	)
 	(wire
 		(pts
@@ -5692,16 +5708,6 @@
 			(type default)
 		)
 		(uuid "96c89bf3-6a41-4c9f-b8f3-b4152c8031cd")
-	)
-	(wire
-		(pts
-			(xy 137.16 162.56) (xy 137.16 173.99)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9786e700-57b7-4dc9-8c49-a3f9e24cd455")
 	)
 	(wire
 		(pts
@@ -5925,16 +5931,6 @@
 	)
 	(wire
 		(pts
-			(xy 133.35 162.56) (xy 137.16 162.56)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b5c50fc3-8f27-4b64-b8d9-2111f3524805")
-	)
-	(wire
-		(pts
 			(xy 64.77 36.83) (xy 60.96 36.83)
 		)
 		(stroke
@@ -5992,16 +5988,6 @@
 			(type default)
 		)
 		(uuid "b9e32c3b-15ce-48c7-beed-4ab5139c8150")
-	)
-	(wire
-		(pts
-			(xy 165.1 153.67) (xy 161.29 153.67)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "bbfbbfa0-4a43-4060-96cc-a9987ba01499")
 	)
 	(wire
 		(pts
@@ -6305,16 +6291,6 @@
 	)
 	(wire
 		(pts
-			(xy 111.76 173.99) (xy 129.54 173.99)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e039cdd0-ebf3-415d-8025-9c1b5d7ac2ca")
-	)
-	(wire
-		(pts
 			(xy 151.13 153.67) (xy 151.13 168.91)
 		)
 		(stroke
@@ -6515,6 +6491,16 @@
 	)
 	(wire
 		(pts
+			(xy 129.54 166.37) (xy 129.54 173.99)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f77972e7-a165-4d9f-ad2d-ed6ba2e1ee4a")
+	)
+	(wire
+		(pts
 			(xy 203.2 67.31) (xy 214.63 67.31)
 		)
 		(stroke
@@ -6522,16 +6508,6 @@
 			(type default)
 		)
 		(uuid "f9acc2d6-4774-4da6-9f60-8a88db47b221")
-	)
-	(wire
-		(pts
-			(xy 153.67 153.67) (xy 151.13 153.67)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f9cb547f-9b66-453e-ac98-16ef354d0180")
 	)
 	(label "5V"
 		(at 53.34 152.4 0)
@@ -6604,7 +6580,7 @@
 		(uuid "9ad0c7e8-e756-4122-83d7-51e6886ceb37")
 	)
 	(label "VPP"
-		(at 151.13 143.51 0)
+		(at 151.13 149.86 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6692,7 +6668,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "5.1K"
+		(property "Value" "4.7K"
 			(at 132.08 181.6099 0)
 			(effects
 				(font
@@ -6762,7 +6738,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "600"
+		(property "Value" "470"
 			(at 66.04 162.5599 0)
 			(effects
 				(font
@@ -6962,72 +6938,6 @@
 			(project ""
 				(path "/f4ccf12f-2c39-4319-adc8-75ef731d1807"
 					(reference "U3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 132.08 166.37 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "16776735-2433-4dd7-a3f8-604ec06d8166")
-		(property "Reference" "#PWR015"
-			(at 132.08 172.72 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 132.08 171.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 132.08 166.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 132.08 166.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 132.08 166.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "c2d128ba-3c6d-4d51-a40b-4bb20e397dda")
-		)
-		(instances
-			(project "iv21-vfd-clock-with-esp32"
-				(path "/f4ccf12f-2c39-4319-adc8-75ef731d1807"
-					(reference "#PWR015")
 					(unit 1)
 				)
 			)
@@ -8516,71 +8426,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 165.1 153.67 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "786307b0-4f20-499c-ad60-2c74ac3cb401")
-		(property "Reference" "#PWR019"
-			(at 165.1 160.02 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 165.608 157.48 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 165.1 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 165.1 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 165.1 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "b70c072d-cf2b-4ab8-8da4-d3add4f91b86")
-		)
-		(instances
-			(project "iv21-vfd-clock-with-esp32"
-				(path "/f4ccf12f-2c39-4319-adc8-75ef731d1807"
-					(reference "#PWR019")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "MOUDLE-SEEEDUINO-XIAO-ESP32C3:MOUDLE-SEEEDUINO-XIAO-ESP32C3")
 		(at 92.71 72.39 0)
 		(unit 1)
@@ -9895,93 +9740,6 @@
 			(project "iv21-vfd-clock-with-esp32"
 				(path "/f4ccf12f-2c39-4319-adc8-75ef731d1807"
 					(reference "#PWR03")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C_Polarized_US")
-		(at 157.48 153.67 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "f3acda30-d45c-4e57-b5a0-ac13a64dea0c")
-		(property "Reference" "C4"
-			(at 158.496 150.114 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "33uF"
-			(at 160.274 157.226 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:CP_Elec_8x10.5"
-			(at 157.48 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.mouser.com/datasheet/2/40/kyocera_avx_aha_series-2887216.pdf"
-			(at 157.48 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Polarized capacitor, US symbol"
-			(at 157.48 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Voltage Rating" "63V DC"
-			(at 157.48 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Product URL" "https://www.mouser.com/ProductDetail/581-AHA0810330M063R"
-			(at 157.48 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "cbde444c-add5-40e2-8584-adfe6fcb4112")
-		)
-		(pin "2"
-			(uuid "356f16da-b859-487a-b2ed-a1c78251dffd")
-		)
-		(instances
-			(project "iv21-vfd-clock-with-esp32"
-				(path "/f4ccf12f-2c39-4319-adc8-75ef731d1807"
-					(reference "C4")
 					(unit 1)
 				)
 			)
