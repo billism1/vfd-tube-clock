@@ -1150,7 +1150,7 @@
 			(net 48 "unconnected-(P1-SHIELD-PadS1)_3")
 			(pinfunction "SHIELD")
 			(pintype "passive+no_connect")
-			(uuid "e9257cbd-b4a0-41c1-9692-2b9aa0b4108d")
+			(uuid "d8907ea1-6cb0-498c-9794-bc35ad762a10")
 		)
 		(pad "S1" thru_hole oval
 			(at 4.32 -3.105 180)
@@ -1162,7 +1162,7 @@
 			(net 48 "unconnected-(P1-SHIELD-PadS1)_3")
 			(pinfunction "SHIELD")
 			(pintype "passive+no_connect")
-			(uuid "e9257cbd-b4a0-41c1-9692-2b9aa0b4108d")
+			(uuid "27ca82c0-860a-46c5-bf66-b0df5424da14")
 		)
 		(pad "S1" thru_hole oval
 			(at 4.32 1.075 180)
@@ -1174,7 +1174,7 @@
 			(net 48 "unconnected-(P1-SHIELD-PadS1)_3")
 			(pinfunction "SHIELD")
 			(pintype "passive+no_connect")
-			(uuid "e9257cbd-b4a0-41c1-9692-2b9aa0b4108d")
+			(uuid "7a4c38f1-5875-4d68-9825-d7a1f6971168")
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_USB.3dshapes/USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal.wrl"
