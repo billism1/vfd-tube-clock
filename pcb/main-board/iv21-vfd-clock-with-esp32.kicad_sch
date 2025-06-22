@@ -9571,7 +9571,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "http://www.ti.com/lit/ds/symlink/lp2985.pdf"
+		(property "Datasheet" "https://www.mouser.com/datasheet/2/1490/S1167_E-3431012.pdf"
 			(at 203.2 135.89 0)
 			(effects
 				(font
@@ -9581,6 +9581,15 @@
 			)
 		)
 		(property "Description" "150mA 16V Low-noise Low-dropout Regulator With Shutdown, 3.0V output voltage, SOT-23-5"
+			(at 203.2 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Product URL" "https://www.mouser.com/ProductDetail/628-S-1167B24-M5T1U"
 			(at 203.2 135.89 0)
 			(effects
 				(font
