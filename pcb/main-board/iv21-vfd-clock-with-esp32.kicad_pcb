@@ -2115,7 +2115,7 @@
 		(descr "Potentiometer, horizontal, Vishay, https://www.vishay.com/docs/51026/t93.pdf, 3/8\" x 3/8\" x 3/16\" (9.7 x 9.8 x 5mm max.)")
 		(tags "Potentiometer horizontal vishay")
 		(property "Reference" "RV2"
-			(at 9.08 1 0)
+			(at 9.08 0 0)
 			(layer "F.SilkS")
 			(uuid "d0fc445f-2949-4cd8-8d88-081f48adb9cc")
 			(effects
@@ -2126,7 +2126,7 @@
 			)
 		)
 		(property "Value" "50K"
-			(at 4.08 3.3925 0)
+			(at 2.33 3.3925 0)
 			(unlocked yes)
 			(layer "F.SilkS")
 			(uuid "aeab103f-e6df-485c-a1b7-e96ae268b150")
@@ -3436,7 +3436,7 @@
 				)
 			)
 		)
-		(property "Value" "S-1167B24-M5T"
+		(property "Value" "S-1167B24"
 			(at 2.6625 0 0)
 			(layer "F.SilkS")
 			(uuid "ca651163-4c8f-465a-98f9-cd35dcf8a757")

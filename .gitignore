@@ -9,5 +9,7 @@ fp-info-cache
 **/*.kicad_prl
 **/~*.kicad_sch.lck
 **/~*.kicad_sch.lck
-firmware/src/credentials.h
 **/~*.kicad_pcb.lck
+**/backups/*.zip
+
+firmware/src/credentials.h
