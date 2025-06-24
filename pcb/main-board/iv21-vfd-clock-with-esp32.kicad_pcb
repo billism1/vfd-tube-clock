@@ -31353,7 +31353,7 @@
 			(justify left bottom)
 		)
 	)
-	(gr_text "IV-21 VFD ESP32 Clock v0.2"
+	(gr_text "IV-21 VFD ESP32 Clock v0.3"
 		(at 85 57.5 0)
 		(layer "F.SilkS")
 		(uuid "a4dfd2ff-67d9-4682-9194-a40f1381c322")
