@@ -4943,16 +4943,6 @@
 	)
 	(wire
 		(pts
-			(xy 48.26 135.89) (xy 193.04 135.89)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "26edea28-b17e-4895-bdad-e1231a323ce4")
-	)
-	(wire
-		(pts
 			(xy 105.41 149.86) (xy 111.76 149.86)
 		)
 		(stroke
@@ -5330,6 +5320,16 @@
 			(type default)
 		)
 		(uuid "60ff8be0-7dbe-4455-9291-aaa0b564c4e8")
+	)
+	(wire
+		(pts
+			(xy 146.05 135.89) (xy 193.04 135.89)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "63df17e5-1c5d-41e4-b6be-c1f7e33c926d")
 	)
 	(wire
 		(pts
@@ -5830,6 +5830,16 @@
 			(type default)
 		)
 		(uuid "af846c47-ead5-4b7b-a677-acb9d79ba5a1")
+	)
+	(wire
+		(pts
+			(xy 48.26 135.89) (xy 138.43 135.89)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b0e2ea30-2df4-4aac-9ba1-b742541a370a")
 	)
 	(wire
 		(pts
@@ -7023,6 +7033,74 @@
 			(project ""
 				(path "/f4ccf12f-2c39-4319-adc8-75ef731d1807"
 					(reference "D1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_US")
+		(at 142.24 135.89 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1eeb32d7-598f-49f0-b00f-351dbf1dbfb3")
+		(property "Reference" "R14"
+			(at 142.24 129.54 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "470"
+			(at 142.24 132.08 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 141.986 136.906 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 142.24 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor, US symbol"
+			(at 142.24 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "66ee0c6d-0fca-459a-8cab-1194e115c40e")
+		)
+		(pin "2"
+			(uuid "b94430b6-8986-4df1-aa61-a3326717e81a")
+		)
+		(instances
+			(project "iv21-vfd-clock-with-esp32"
+				(path "/f4ccf12f-2c39-4319-adc8-75ef731d1807"
+					(reference "R14")
 					(unit 1)
 				)
 			)
