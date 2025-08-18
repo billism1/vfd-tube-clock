@@ -1,0 +1,129 @@
+# Home Assistant REST Integration Configuration for VFD Tube Clock
+# Add this to your Home Assistant configuration.yaml file
+# Replace 192.168.1.100 with your VFD clock's actual IP address
+
+# REST Command for controlling the filament
+rest_command:
+  vfd_clock_toggle_filament:
+    url: "http://192.168.1.100/filament/toggle"
+    method: GET
+    timeout: 10
+
+# REST Sensor for getting clock status
+rest:
+  - resource: "http://192.168.1.100/status"
+    method: GET
+    timeout: 10
+    scan_interval: 30  # Update every 30 seconds
+    json_attributes_path: "$"
+    json_attributes:
+      - filament_state
+      - display_mode
+      - custom_text
+      - flash_messages_enabled
+      - current_time
+      - wifi_connected
+      - ip_address
+      - uptime_ms
+      - boost_duty_cycle
+      - target_voltage
+    value_template: "{{ value_json.current_time }}"
+    name: "VFD Clock Status"
+
+# Template entities based on the REST sensor
+template:
+  - binary_sensor:
+      - name: "VFD Clock Filament"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'filament_state') }}"
+        device_class: power
+        
+      - name: "VFD Clock WiFi Connected"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'wifi_connected') }}"
+        device_class: connectivity
+        
+      - name: "VFD Clock Flash Messages Enabled"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'flash_messages_enabled') }}"
+
+  - sensor:
+      - name: "VFD Clock Display Mode"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'display_mode') }}"
+        
+      - name: "VFD Clock Custom Text"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'custom_text') }}"
+        
+      - name: "VFD Clock IP Address"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'ip_address') }}"
+        
+      - name: "VFD Clock Uptime"
+        state: "{{ (state_attr('sensor.vfd_clock_status', 'uptime_ms') | int / 1000) | round(0) }}"
+        unit_of_measurement: "s"
+        device_class: duration
+        
+      - name: "VFD Clock Boost Duty Cycle"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'boost_duty_cycle') }}"
+        unit_of_measurement: "%"
+        
+      - name: "VFD Clock Target Voltage"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'target_voltage') }}"
+        unit_of_measurement: "V"
+        device_class: voltage
+
+  - switch:
+      - name: "VFD Clock Filament Control"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'filament_state') }}"
+        turn_on:
+          - condition: template
+            value_template: "{{ not state_attr('sensor.vfd_clock_status', 'filament_state') }}"
+          - service: rest_command.vfd_clock_toggle_filament
+          - delay: 2  # Wait a bit for the change to take effect
+          - service: homeassistant.update_entity
+            target:
+              entity_id: sensor.vfd_clock_status
+        turn_off:
+          - condition: template
+            value_template: "{{ state_attr('sensor.vfd_clock_status', 'filament_state') }}"
+          - service: rest_command.vfd_clock_toggle_filament
+          - delay: 2  # Wait a bit for the change to take effect
+          - service: homeassistant.update_entity
+            target:
+              entity_id: sensor.vfd_clock_status
+
+# Optional automation examples:
+automation:
+  - alias: "VFD Clock - Turn off at night"
+    trigger:
+      platform: time
+      at: "23:00:00"
+    condition:
+      condition: state
+      entity_id: binary_sensor.vfd_clock_filament
+      state: "on"
+    action:
+      service: switch.turn_off
+      target:
+        entity_id: switch.vfd_clock_filament_control
+
+  - alias: "VFD Clock - Turn on in morning"
+    trigger:
+      platform: time
+      at: "07:00:00"
+    condition:
+      condition: state
+      entity_id: binary_sensor.vfd_clock_filament
+      state: "off"
+    action:
+      service: switch.turn_on
+      target:
+        entity_id: switch.vfd_clock_filament_control
+
+  - alias: "VFD Clock - Notify if offline"
+    trigger:
+      platform: state
+      entity_id: binary_sensor.vfd_clock_wifi_connected
+      to: "off"
+      for: "00:05:00"  # Wait 5 minutes before alerting
+    action:
+      service: notify.persistent_notification
+      data:
+        message: "VFD Clock appears to be offline or disconnected from WiFi"
+        title: "VFD Clock Offline"

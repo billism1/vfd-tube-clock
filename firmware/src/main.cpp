@@ -65,6 +65,16 @@ String currentGlitchText = "";                                       // Current 
 
 // VFD tube filament. Used to turn on the VFD tube filament heater. Applies voltage to transistor.
 const int VFD_FILAMENT_PIN = D2;         // D2 pin is GPIO4 on Seeeduino ESP32-C3. Used to turn on the filament current to the VFD.
+bool vfdFilamentEnabled = true;          // VFD filament state (can be controlled via Home Assistant/ESPHome)
+
+// Buttons
+const int BUTTON_1_PIN = D1;             // D1 pin (A1) on Seeeduino ESP32-C3. SW1 tactile momentary switch (connects to ground when pressed)
+const int BUTTON_2_PIN = D0;             // D0 pin (A0) on Seeeduino ESP32-C3. SW2 tactile momentary switch (connects to ground when pressed)
+bool button1LastState = HIGH;           // Previous state of button 1 (HIGH when not pressed, LOW when pressed)
+bool button2LastState = HIGH;           // Previous state of button 2 (HIGH when not pressed, LOW when pressed)
+unsigned long button1LastDebounceTime = 0;  // Last time button 1 state changed
+unsigned long button2LastDebounceTime = 0;  // Last time button 2 state changed
+const unsigned long BUTTON_DEBOUNCE_DELAY = 50;  // Debounce delay in milliseconds
 
 // LED
 const int PWM_LED_INDICATOR_PIN = D6;    // D6 pin is GPIO21 on Seeeduino ESP32-C3. Used for PWM output to the brightness of the indicator LED/
@@ -176,6 +186,17 @@ void updateFlashMessages();
 void scheduleNextFlash();
 String generateGlitchText();
 
+// VFD filament control functions
+void initVfdFilament();
+void setVfdFilament(bool enabled);
+bool getVfdFilamentState();
+
+// Button handling functions
+void initButtons();
+void updateButtons();
+void handleButton1Press();
+void handleButton2Press();
+
 // Web server handlers
 void initWebServer();
 void updateCustomDisplay();
@@ -183,6 +204,8 @@ void handleRoot();
 void handleToggleMode();
 void handleToggleMessageMode();
 void handleSetText();
+void handleFilamentToggle();
+void handleGetStatus();
 void handleNotFound();
 
 void setup()
@@ -210,10 +233,13 @@ void setup()
   Serial.println("Init Web Server...");
   initWebServer();
 
-  // Turn on VFD Filament heater
-  Serial.println("Turning on VFD Filament...");
-  pinMode(VFD_FILAMENT_PIN, OUTPUT);
-  digitalWrite(VFD_FILAMENT_PIN, HIGH); // Turn on the filament (5V before filament resistor) to heat the VFD tube
+  // Initialize VFD Filament control
+  Serial.println("Init VFD Filament control...");
+  initVfdFilament();
+
+  // Initialize buttons
+  Serial.println("Init buttons...");
+  initButtons();
 
   // Initialize I2C with explicit pins
   Serial.println("Init I2C for ADC...");
@@ -251,6 +277,9 @@ void loop()
 {
   // Handle web server requests
   server.handleClient();
+  
+  // Update buttons
+  updateButtons();
 
   // Update flash messages (only if enabled and in time mode)
   if (flashMessageMode && isDisplayTimeMode) {
@@ -332,6 +361,11 @@ void initWebServer()
   server.on("/toggle", handleToggleMode);
   server.on("/toggleFlashMessage", handleToggleMessageMode);
   server.on("/settext", HTTP_POST, handleSetText);
+  
+  // ESPHome/Home Assistant compatible endpoints
+  server.on("/filament/toggle", handleFilamentToggle);
+  server.on("/status", handleGetStatus);
+  
   server.onNotFound(handleNotFound);
   
   // Start the server
@@ -685,6 +719,107 @@ void updateCustomDisplay()
   }
 }
 
+// VFD filament control functions
+void initVfdFilament()
+{
+  pinMode(VFD_FILAMENT_PIN, OUTPUT);
+  setVfdFilament(vfdFilamentEnabled); // Set initial state
+  Serial.print("VFD filament initialized, state: ");
+  Serial.println(vfdFilamentEnabled ? "ON" : "OFF");
+}
+
+void setVfdFilament(bool enabled)
+{
+  vfdFilamentEnabled = enabled;
+  digitalWrite(VFD_FILAMENT_PIN, enabled ? HIGH : LOW);
+  Serial.print("VFD filament turned ");
+  Serial.println(enabled ? "ON" : "OFF");
+}
+
+bool getVfdFilamentState()
+{
+  return vfdFilamentEnabled;
+}
+
+// Button handling functions
+void initButtons()
+{
+  pinMode(BUTTON_1_PIN, INPUT_PULLUP); // Enable internal pull-up resistor
+  pinMode(BUTTON_2_PIN, INPUT_PULLUP); // Enable internal pull-up resistor
+  
+  // Read initial button states
+  button1LastState = digitalRead(BUTTON_1_PIN);
+  button2LastState = digitalRead(BUTTON_2_PIN);
+  
+  Serial.println("Buttons initialized with pull-up resistors");
+}
+
+void updateButtons()
+{
+  unsigned long currentTime = millis();
+  
+  // Read current button states
+  bool button1CurrentState = digitalRead(BUTTON_1_PIN);
+  bool button2CurrentState = digitalRead(BUTTON_2_PIN);
+  
+  // Handle Button 1
+  if (button1CurrentState != button1LastState) {
+    button1LastDebounceTime = currentTime;
+  }
+  
+  if ((currentTime - button1LastDebounceTime) > BUTTON_DEBOUNCE_DELAY) {
+    if (button1CurrentState == LOW && button1LastState == HIGH) {
+      // Button 1 was just pressed (transition from HIGH to LOW)
+      handleButton1Press();
+    }
+  }
+  button1LastState = button1CurrentState;
+  
+  // Handle Button 2
+  if (button2CurrentState != button2LastState) {
+    button2LastDebounceTime = currentTime;
+  }
+  
+  if ((currentTime - button2LastDebounceTime) > BUTTON_DEBOUNCE_DELAY) {
+    if (button2CurrentState == LOW && button2LastState == HIGH) {
+      // Button 2 was just pressed (transition from HIGH to LOW)
+      handleButton2Press();
+    }
+  }
+  button2LastState = button2CurrentState;
+}
+
+void handleButton1Press()
+{
+  Serial.println("Button 1 pressed!");
+  
+  // TODO: Add your custom functionality for Button 1 here
+  // Example possibilities:
+  // - Toggle display mode
+  // - Cycle through brightness levels
+  // - Toggle flash messages
+  // - Enter configuration mode
+  
+  // For now, let's toggle the filament as an example
+  setVfdFilament(!getVfdFilamentState());
+}
+
+void handleButton2Press()
+{
+  Serial.println("Button 2 pressed!");
+  
+  // TODO: Add your custom functionality for Button 2 here
+  // Example possibilities:
+  // - Toggle between time and custom text
+  // - Cycle through different flash message sets
+  // - Adjust voltage target
+  // - Reset to defaults
+  
+  // For now, let's toggle the display mode as an example
+  isDisplayTimeMode = !isDisplayTimeMode;
+  Serial.println("Display mode toggled to: " + String(isDisplayTimeMode ? "Time" : "Custom"));
+}
+
 // Web server handlers - Comrade VFD Clock Control Interface
 void handleRoot()
 {
@@ -724,6 +859,41 @@ void handleSetText()
   }
   server.sendHeader("Location", "/");
   server.send(302, "text/plain", "");
+}
+
+// ESPHome/Home Assistant compatible endpoints
+void handleFilamentToggle()
+{
+  // Toggle filament state
+  setVfdFilament(!getVfdFilamentState());
+  
+  // Return JSON response for Home Assistant compatibility
+  String response = "{\"filament_state\":";
+  response += getVfdFilamentState() ? "true" : "false";
+  response += ",\"message\":\"Filament ";
+  response += getVfdFilamentState() ? "enabled" : "disabled";
+  response += "\"}";
+  
+  server.send(200, "application/json", response);
+}
+
+void handleGetStatus()
+{
+  // Return comprehensive status in JSON format for Home Assistant/ESPHome
+  String response = "{";
+  response += "\"filament_state\":" + String(getVfdFilamentState() ? "true" : "false") + ",";
+  response += "\"display_mode\":\"" + String(isDisplayTimeMode ? "time" : "custom") + "\",";
+  response += "\"custom_text\":\"" + customText + "\",";
+  response += "\"flash_messages_enabled\":" + String(flashMessageMode ? "true" : "false") + ",";
+  response += "\"current_time\":\"" + getFormattedTime() + "\",";
+  response += "\"wifi_connected\":" + String(WiFi.status() == WL_CONNECTED ? "true" : "false") + ",";
+  response += "\"ip_address\":\"" + WiFi.localIP().toString() + "\",";
+  response += "\"uptime_ms\":" + String(millis()) + ",";
+  response += "\"boost_duty_cycle\":" + String(boostDutyCycle) + ",";
+  response += "\"target_voltage\":" + String(VBOOST_TARGET_VOLTAGE_V) + "";
+  response += "}";
+  
+  server.send(200, "application/json", response);
 }
 
 void handleNotFound()
