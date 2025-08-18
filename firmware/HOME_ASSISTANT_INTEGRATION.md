@@ -33,7 +33,7 @@ Returns comprehensive status in JSON format:
   "flash_messages_enabled": true,
   "current_time": "14:30:25",
   "wifi_connected": true,
-  "ip_address": "192.168.1.100",
+  "ip_address": "192.168.86.104",
   "uptime_ms": 123456789,
   "boost_duty_cycle": 110,
   "target_voltage": 30.0
@@ -69,7 +69,7 @@ The VFD Tube Clock uses a REST API approach for Home Assistant integration, whic
 2. **Configure Home Assistant**
    - Copy the configuration from `home-assistant-config.yaml`
    - Add it to your Home Assistant `configuration.yaml` file
-   - Replace `192.168.1.100` with your clock's actual IP address
+   - Replace `192.168.86.104` with your clock's actual IP address
    - Restart Home Assistant
 
 3. **Verify Integration**

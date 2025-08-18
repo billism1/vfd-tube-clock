@@ -1,17 +1,17 @@
 # Home Assistant REST Integration Configuration for VFD Tube Clock
 # Add this to your Home Assistant configuration.yaml file
-# Replace 192.168.1.100 with your VFD clock's actual IP address
+# Replace 192.168.86.104 with your VFD clock's actual IP address
 
 # REST Command for controlling the filament
 rest_command:
   vfd_clock_toggle_filament:
-    url: "http://192.168.1.100/filament/toggle"
+    url: "http://192.168.86.104/filament/toggle"
     method: GET
     timeout: 10
 
 # REST Sensor for getting clock status
 rest:
-  - resource: "http://192.168.1.100/status"
+  - resource: "http://192.168.86.104/status"
     method: GET
     timeout: 10
     scan_interval: 30  # Update every 30 seconds
