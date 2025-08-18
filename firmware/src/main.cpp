@@ -68,9 +68,11 @@ const int VFD_FILAMENT_PIN = D2;         // D2 pin is GPIO4 on Seeeduino ESP32-C
 
 // LED
 const int PWM_LED_INDICATOR_PIN = D6;    // D6 pin is GPIO21 on Seeeduino ESP32-C3. Used for PWM output to the brightness of the indicator LED/
+const int PWM_LED_INDICATOR_CHANNEL = 1;
 
 // Voltage Boost PWM configuration.
 const int PWM_VBOOST_PIN = D7;           // D7 pin is GPIO20 on Seeeduino ESP32-C3. Used for PWM output to the booster circuit driving the VFD.
+const int PWM_VBOOST_CHANNEL = 0;
 
 // MAX6921 VFD IC configuration. This is the VFD driver IC that controls the IV-21 (or similar) VFD tube. Using SPI for Communication.
 const int MAX6921_DIN_PIN = MOSI;        // MOSI pin (default) is GPIO10 on Seeeduino ESP32-C3. Used for SPI data input to MAX6921 IC.
@@ -360,18 +362,20 @@ void initADC()
 
 void initBoostPwmSignal()
 {
-  // Set up LEDC PWM on the pin
-  ledcAttach(PWM_VBOOST_PIN, VBOOST_PWM_FREQUENCY, VBOOST_PWM_RESOLUTION);
+  // Set up LEDC PWM using Arduino ESP32 3.x API
+  ledcSetup(PWM_VBOOST_CHANNEL, VBOOST_PWM_FREQUENCY, VBOOST_PWM_RESOLUTION);
+  ledcAttachPin(PWM_VBOOST_PIN, PWM_VBOOST_CHANNEL);
   // Set initial duty cycle
-  ledcWrite(PWM_VBOOST_PIN, boostDutyCycle);
+  ledcWrite(PWM_VBOOST_CHANNEL, boostDutyCycle);
 }
 
 void initIndicatorLedPwmSignal(int dutyCycle)
 {
-  // Set up LEDC PWM on the pin
-  ledcAttach(PWM_LED_INDICATOR_PIN, LED_PWM_FREQUENCY_HZ, LED_PWM_BIT_RESOLUTION);
+  // Set up LEDC PWM using Arduino ESP32 3.x API
+  ledcSetup(PWM_LED_INDICATOR_CHANNEL, LED_PWM_FREQUENCY_HZ, LED_PWM_BIT_RESOLUTION);
+  ledcAttachPin(PWM_LED_INDICATOR_PIN, PWM_LED_INDICATOR_CHANNEL);
   // Set initial duty cycle
-  ledcWrite(PWM_LED_INDICATOR_PIN, dutyCycle);
+  ledcWrite(PWM_LED_INDICATOR_CHANNEL, dutyCycle);
 }
 
 void initFlashMessages()
@@ -529,7 +533,7 @@ int updateBoostDutyCycle(int currentDutyCycle, bool printInfo)
   }
 
   // Update PWM output
-  ledcWrite(PWM_VBOOST_PIN, newDuty);
+  ledcWrite(PWM_VBOOST_CHANNEL, newDuty);
 
 #ifdef DEBUG
   if (printInfo)
