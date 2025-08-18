@@ -893,6 +893,10 @@ void handleFilamentToggle()
 
 void handleGetStatus()
 {
+  // Read current button states
+  bool button1State = digitalRead(BUTTON_1_PIN);
+  bool button2State = digitalRead(BUTTON_2_PIN);
+  
   // Return comprehensive status in JSON format for Home Assistant/ESPHome
   String response = "{";
   response += "\"filament_state\":" + String(getVfdFilamentState() ? "true" : "false") + ",";
@@ -904,7 +908,9 @@ void handleGetStatus()
   response += "\"ip_address\":\"" + WiFi.localIP().toString() + "\",";
   response += "\"uptime_ms\":" + String(millis()) + ",";
   response += "\"boost_duty_cycle\":" + String(boostDutyCycle) + ",";
-  response += "\"target_voltage\":" + String(VBOOST_TARGET_VOLTAGE_V) + "";
+  response += "\"target_voltage\":" + String(VBOOST_TARGET_VOLTAGE_V) + ",";
+  response += "\"button1_state\":\"" + String(button1State ? "HIGH" : "LOW") + "\",";
+  response += "\"button2_state\":\"" + String(button2State ? "HIGH" : "LOW") + "\"";
   response += "}";
   
   server.send(200, "application/json", response);
