@@ -68,8 +68,8 @@ const int VFD_FILAMENT_PIN = D2;         // D2 pin is GPIO4 on Seeeduino ESP32-C
 bool vfdFilamentEnabled = true;          // VFD filament state (can be controlled via Home Assistant/ESPHome)
 
 // Buttons
-const int BUTTON_1_PIN = D1;             // D1 pin (A1) on Seeeduino ESP32-C3. SW1 tactile momentary switch (connects to ground when pressed)
-const int BUTTON_2_PIN = D0;             // D0 pin (A0) on Seeeduino ESP32-C3. SW2 tactile momentary switch (connects to ground when pressed)
+const int BUTTON_1_PIN = D1;             // D1 pin = GPIO3 on Seeeduino ESP32-C3. SW1 tactile momentary switch (connects to ground when pressed)
+const int BUTTON_2_PIN = D0;             // D0 pin = GPIO2 on Seeeduino ESP32-C3. SW2 tactile momentary switch (connects to ground when pressed)
 bool button1LastState = HIGH;           // Previous state of button 1 (HIGH when not pressed, LOW when pressed)
 bool button2LastState = HIGH;           // Previous state of button 2 (HIGH when not pressed, LOW when pressed)
 unsigned long button1LastDebounceTime = 0;  // Last time button 1 state changed
@@ -762,9 +762,21 @@ void updateButtons()
   bool button1CurrentState = digitalRead(BUTTON_1_PIN);
   bool button2CurrentState = digitalRead(BUTTON_2_PIN);
   
+  // Debug: Print button states occasionally (every 5 seconds)
+  static unsigned long lastDebugPrint = 0;
+  if (currentTime - lastDebugPrint > 5000) {
+    Serial.print("Button states - B1: ");
+    Serial.print(button1CurrentState ? "HIGH" : "LOW");
+    Serial.print(", B2: ");
+    Serial.println(button2CurrentState ? "HIGH" : "LOW");
+    lastDebugPrint = currentTime;
+  }
+  
   // Handle Button 1
   if (button1CurrentState != button1LastState) {
     button1LastDebounceTime = currentTime;
+    Serial.print("Button 1 state changed to: ");
+    Serial.println(button1CurrentState ? "HIGH" : "LOW");
   }
   
   if ((currentTime - button1LastDebounceTime) > BUTTON_DEBOUNCE_DELAY) {
@@ -778,6 +790,8 @@ void updateButtons()
   // Handle Button 2
   if (button2CurrentState != button2LastState) {
     button2LastDebounceTime = currentTime;
+    Serial.print("Button 2 state changed to: ");
+    Serial.println(button2CurrentState ? "HIGH" : "LOW");
   }
   
   if ((currentTime - button2LastDebounceTime) > BUTTON_DEBOUNCE_DELAY) {
