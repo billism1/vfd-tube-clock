@@ -18,6 +18,21 @@ rest_command:
     url: "http://192.168.86.104/filament/toggle"
     method: GET
     timeout: 10
+    
+  vfd_clock_flash_messages_on:
+    url: "http://192.168.86.104/flashmessages/on"
+    method: GET
+    timeout: 10
+    
+  vfd_clock_flash_messages_off:
+    url: "http://192.168.86.104/flashmessages/off"
+    method: GET
+    timeout: 10
+    
+  vfd_clock_toggle_flash_messages:
+    url: "http://192.168.86.104/flashmessages/toggle"
+    method: GET
+    timeout: 10
 
 # REST Sensor for getting clock status
 sensor:
@@ -115,6 +130,29 @@ switch:
           - action: homeassistant.update_entity
             target:
               entity_id: sensor.vfd_clock_status
+              
+      vfd_clock_flash_messages_control:
+        friendly_name: "VFD Clock Flash Messages Control"
+        value_template: "{{ state_attr('sensor.vfd_clock_status', 'flash_messages_enabled') | bool }}"
+        availability_template: "{{ state_attr('sensor.vfd_clock_status', 'flash_messages_enabled') is not none }}"
+        icon_template: >-
+          {% if state_attr('sensor.vfd_clock_status', 'flash_messages_enabled') %}
+            mdi:message-flash
+          {% else %}
+            mdi:message-flash-outline
+          {% endif %}
+        turn_on:
+          - action: rest_command.vfd_clock_flash_messages_on
+          - delay: 2
+          - action: homeassistant.update_entity
+            target:
+              entity_id: sensor.vfd_clock_status
+        turn_off:
+          - action: rest_command.vfd_clock_flash_messages_off
+          - delay: 2
+          - action: homeassistant.update_entity
+            target:
+              entity_id: sensor.vfd_clock_status
 
 # Optional automation examples:
 automation:
@@ -155,3 +193,29 @@ automation:
       data:
         message: "VFD Clock appears to be offline or disconnected from WiFi"
         title: "VFD Clock Offline"
+
+  - alias: "VFD Clock - Disable flash messages at night"
+    trigger:
+      platform: time
+      at: "22:00:00"
+    condition:
+      condition: state
+      entity_id: binary_sensor.vfd_clock_flash_messages_enabled
+      state: "on"
+    action:
+      action: switch.turn_off
+      target:
+        entity_id: switch.vfd_clock_flash_messages_control
+
+  - alias: "VFD Clock - Enable flash messages in morning"
+    trigger:
+      platform: time
+      at: "08:00:00"
+    condition:
+      condition: state
+      entity_id: binary_sensor.vfd_clock_flash_messages_enabled
+      state: "off"
+    action:
+      action: switch.turn_on
+      target:
+        entity_id: switch.vfd_clock_flash_messages_control

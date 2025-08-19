@@ -207,6 +207,9 @@ void handleSetText();
 void handleFilamentToggle();
 void handleFilamentOn();
 void handleFilamentOff();
+void handleFlashMessagesToggle();
+void handleFlashMessagesOn();
+void handleFlashMessagesOff();
 void handleGetStatus();
 void handleNotFound();
 
@@ -368,6 +371,9 @@ void initWebServer()
   server.on("/filament/toggle", handleFilamentToggle);
   server.on("/filament/on", handleFilamentOn);
   server.on("/filament/off", handleFilamentOff);
+  server.on("/flashmessages/toggle", handleFlashMessagesToggle);
+  server.on("/flashmessages/on", handleFlashMessagesOn);
+  server.on("/flashmessages/off", handleFlashMessagesOff);
   server.on("/status", handleGetStatus);
   
   server.onNotFound(handleNotFound);
@@ -927,6 +933,57 @@ void handleFilamentOff()
   String response = "{\"filament_state\":";
   response += getVfdFilamentState() ? "true" : "false";
   response += ",\"message\":\"Filament disabled\"}";
+  
+  server.send(200, "application/json", response);
+}
+
+void handleFlashMessagesToggle()
+{
+  Serial.println("HTTP GET /flashmessages/toggle - Request received from: " + server.client().remoteIP().toString());
+  
+  // Toggle flash messages state
+  flashMessageMode = !flashMessageMode;
+  
+  // Return JSON response for Home Assistant compatibility
+  String response = "{\"flash_messages_enabled\":";
+  response += flashMessageMode ? "true" : "false";
+  response += ",\"message\":\"Flash messages ";
+  response += flashMessageMode ? "enabled" : "disabled";
+  response += "\"}";
+  
+  server.send(200, "application/json", response);
+}
+
+void handleFlashMessagesOn()
+{
+  Serial.println("HTTP GET /flashmessages/on - Request received from: " + server.client().remoteIP().toString());
+  
+  // Only turn on if currently off
+  if (!flashMessageMode) {
+    flashMessageMode = true;
+  }
+  
+  // Return JSON response
+  String response = "{\"flash_messages_enabled\":";
+  response += flashMessageMode ? "true" : "false";
+  response += ",\"message\":\"Flash messages enabled\"}";
+  
+  server.send(200, "application/json", response);
+}
+
+void handleFlashMessagesOff()
+{
+  Serial.println("HTTP GET /flashmessages/off - Request received from: " + server.client().remoteIP().toString());
+  
+  // Only turn off if currently on
+  if (flashMessageMode) {
+    flashMessageMode = false;
+  }
+  
+  // Return JSON response
+  String response = "{\"flash_messages_enabled\":";
+  response += flashMessageMode ? "true" : "false";
+  response += ",\"message\":\"Flash messages disabled\"}";
   
   server.send(200, "application/json", response);
 }
