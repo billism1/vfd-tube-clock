@@ -94,13 +94,13 @@ const int MCP3221_SDA_PIN = SDA;        // SDA pin (default) is GPIO6 on Seeedui
 const int MCP3221_SCL_PIN = SCL;        // SCL pin (default) is GPIO7 on Seeeduino ESP32-C3. Used for I2C communication with MCP3221 ADC.
 
 // Voltage Boost PWM configuration.
-const int MAX_VBOOST_PWM_DUTY_CYCLE = 220;                             // Maximum duty cycle for PWM signal (8-bit resolution, 0-255 range). In testing, above about 85% (220 for 8-bit value) yielded diminishing returns.
-const int MIN_VBOOST_PWM_DUTY_CYCLE = 5;                               // Minimum duty cycle to keep the VFD lit (8-bit resolution, 0-255 range)
-const int VBOOST_PWM_RESOLUTION = 8;                                   // 8-bit resolution (0-255 values)
-const int VBOOST_PWM_DUTY_MAX_VALUE = pow(2, VBOOST_PWM_RESOLUTION);   // Convert bit resolution to max value (256 for 8-bit resolution)
-const int VBOOST_PWM_FREQUENCY = 25000;                                // Default frequency in Hz
+const int VBOOST_PWM_RESOLUTION = 6;                                   // 6-bit resolution (0-63 values) for higher frequency capability
+const int MAX_VBOOST_PWM_DUTY_CYCLE = 55;                              // Maximum duty cycle for PWM signal (6-bit resolution, 0-63 range). About 85% of 63
+const int MIN_VBOOST_PWM_DUTY_CYCLE = 2;                               // Minimum duty cycle to keep the VFD lit (6-bit resolution, 0-63 range)
+const int VBOOST_PWM_DUTY_MAX_VALUE = pow(2, VBOOST_PWM_RESOLUTION);   // Convert bit resolution to max value (64 for 6-bit resolution)
+const int VBOOST_PWM_FREQUENCY = 20000;                                // Default frequency in Hz
 const float VBOOST_TARGET_VOLTAGE_V = 30;                              // 30 Volts
-int boostDutyCycle = 110;                                              // Start with moderate duty cycle for IV-21
+int boostDutyCycle = 27;                                               // Start with moderate duty cycle for IV-21 (about 43% of 63)
 
 // Indicator LED PWM configuration.
 const int LED_PWM_BIT_RESOLUTION = 8;                                  // 8-bit resolution (0-255 values)
@@ -169,6 +169,7 @@ MAX6921 vfdDisplay(MAX6921_DIN_PIN, MAX6921_CLK_PIN, MAX6921_LOAD_PIN, DIGIT_PIN
 void initWifi();
 void initTime();
 void initIndicatorLedPwmSignal(int dutyCycle);
+void setIndicatorLedDutyCycle(int dutyCycle);
 void printLocalTime();
 String getFormattedTime();
 
@@ -270,9 +271,9 @@ void setup()
   Serial.println("Init Flash Messages...");
   initFlashMessages();
 
-  // Init Indicator LED PWM (turn off to indicate setup complete)
-  Serial.println("Init Indicator LED PWM Signal (off)...");
-  initIndicatorLedPwmSignal(0);
+  // Turn off indicator LED to indicate setup complete
+  Serial.println("Turning off Indicator LED (setup complete)...");
+  setIndicatorLedDutyCycle(0);
 
   Serial.println("Setup complete.");
   Serial.print("Web interface available at: http://");
@@ -408,19 +409,76 @@ void initADC()
 void initBoostPwmSignal()
 {
   // Set up LEDC PWM using Arduino ESP32 3.x API
-  ledcSetup(PWM_VBOOST_CHANNEL, VBOOST_PWM_FREQUENCY, VBOOST_PWM_RESOLUTION);
+  uint32_t actualBoostPwmFreq = ledcSetup(PWM_VBOOST_CHANNEL, VBOOST_PWM_FREQUENCY, VBOOST_PWM_RESOLUTION);
   ledcAttachPin(PWM_VBOOST_PIN, PWM_VBOOST_CHANNEL);
   // Set initial duty cycle
   ledcWrite(PWM_VBOOST_CHANNEL, boostDutyCycle);
+  
+  // Debug output to verify PWM configuration
+  Serial.print("Boost PWM Channel: ");
+  Serial.println(PWM_VBOOST_CHANNEL);
+  Serial.print("Boost PWM Pin (D7/GPIO20): ");
+  Serial.println(PWM_VBOOST_PIN);
+  Serial.print("Requested frequency: ");
+  Serial.print(VBOOST_PWM_FREQUENCY);
+  Serial.println(" Hz");
+  Serial.print("Actual frequency: ");
+  Serial.print(actualBoostPwmFreq);
+  Serial.println(" Hz");
+  Serial.print("PWM Resolution: ");
+  Serial.print(VBOOST_PWM_RESOLUTION);
+  Serial.println(" bits");
+  Serial.print("Initial duty cycle: ");
+  Serial.print(boostDutyCycle);
+  Serial.print("/");
+  Serial.print(VBOOST_PWM_DUTY_MAX_VALUE - 1);
+  Serial.print(" (");
+  Serial.print((boostDutyCycle * 100.0) / (VBOOST_PWM_DUTY_MAX_VALUE - 1), 1);
+  Serial.println("%)");
 }
 
 void initIndicatorLedPwmSignal(int dutyCycle)
 {
   // Set up LEDC PWM using Arduino ESP32 3.x API
-  ledcSetup(PWM_LED_INDICATOR_CHANNEL, LED_PWM_FREQUENCY_HZ, LED_PWM_BIT_RESOLUTION);
+  uint32_t actualLedPwmFreq = ledcSetup(PWM_LED_INDICATOR_CHANNEL, LED_PWM_FREQUENCY_HZ, LED_PWM_BIT_RESOLUTION);
   ledcAttachPin(PWM_LED_INDICATOR_PIN, PWM_LED_INDICATOR_CHANNEL);
   // Set initial duty cycle
   ledcWrite(PWM_LED_INDICATOR_CHANNEL, dutyCycle);
+
+  // Debug output to verify PWM configuration
+  Serial.print("LED Indicator PWM Channel: ");
+  Serial.println(PWM_LED_INDICATOR_CHANNEL);
+  Serial.print("LED Indicator PWM Pin (D6/GPIO19): ");
+  Serial.println(PWM_LED_INDICATOR_PIN);
+  Serial.print("Requested frequency: ");
+  Serial.print(LED_PWM_FREQUENCY_HZ);
+  Serial.println(" Hz");
+  Serial.print("Actual frequency: ");
+  Serial.print(actualLedPwmFreq);
+  Serial.println(" Hz");
+  Serial.print("PWM Resolution: ");
+  Serial.print(LED_PWM_BIT_RESOLUTION);
+  Serial.println(" bits");
+  Serial.print("Initial duty cycle: ");
+  Serial.print(dutyCycle);
+  Serial.print("/");
+  Serial.print((1 << LED_PWM_BIT_RESOLUTION) - 1);
+  Serial.print(" (");
+  Serial.print((dutyCycle * 100.0) / ((1 << LED_PWM_BIT_RESOLUTION) - 1), 1);
+  Serial.println("%)");
+}
+
+void setIndicatorLedDutyCycle(int dutyCycle)
+{
+  // Only change the duty cycle, don't reconfigure the PWM channel
+  ledcWrite(PWM_LED_INDICATOR_CHANNEL, dutyCycle);
+  Serial.print("LED Indicator duty cycle changed to: ");
+  Serial.print(dutyCycle);
+  Serial.print("/");
+  Serial.print((1 << LED_PWM_BIT_RESOLUTION) - 1);
+  Serial.print(" (");
+  Serial.print((dutyCycle * 100.0) / ((1 << LED_PWM_BIT_RESOLUTION) - 1), 1);
+  Serial.println("%)");
 }
 
 void initFlashMessages()
