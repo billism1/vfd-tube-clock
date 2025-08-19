@@ -99,7 +99,7 @@ const int MIN_VBOOST_PWM_DUTY_CYCLE = 5;                               // Minimu
 const int VBOOST_PWM_RESOLUTION = 8;                                   // 8-bit resolution (0-255 values)
 const int VBOOST_PWM_DUTY_MAX_VALUE = pow(2, VBOOST_PWM_RESOLUTION);   // Convert bit resolution to max value (256 for 8-bit resolution)
 const int VBOOST_PWM_FREQUENCY = 25000;                                // Default frequency in Hz
-const float VBOOST_TARGET_VOLTAGE_V = 30;                              // 30 Volts
+const float VBOOST_TARGET_VOLTAGE_V = 27;                              // 27 Volts
 int boostDutyCycle = 110;                                              // Start with moderate duty cycle for IV-21
 
 // Indicator LED PWM configuration.
@@ -1068,7 +1068,7 @@ void handleGetStatus()
   response += "\"wifi_connected\":" + String(WiFi.status() == WL_CONNECTED ? "true" : "false") + ",";
   response += "\"ip_address\":\"" + WiFi.localIP().toString() + "\",";
   response += "\"uptime_ms\":" + String(millis()) + ",";
-  response += "\"boost_duty_cycle\":" + String(boostDutyCycle) + ",";
+  response += "\"boost_duty_cycle\":" + String((boostDutyCycle * 100.0) / (VBOOST_PWM_DUTY_MAX_VALUE - 1), 1) + ",";
   response += "\"target_voltage\":" + String(VBOOST_TARGET_VOLTAGE_V) + ",";
   response += "\"actual_voltage\":" + String(currentActualVoltage, 2) + ",";
   response += "\"button1_state\":\"" + String(button1State ? "HIGH" : "LOW") + "\",";
