@@ -205,6 +205,8 @@ void handleToggleMode();
 void handleToggleMessageMode();
 void handleSetText();
 void handleFilamentToggle();
+void handleFilamentOn();
+void handleFilamentOff();
 void handleGetStatus();
 void handleNotFound();
 
@@ -364,6 +366,8 @@ void initWebServer()
   
   // ESPHome/Home Assistant compatible endpoints
   server.on("/filament/toggle", handleFilamentToggle);
+  server.on("/filament/on", handleFilamentOn);
+  server.on("/filament/off", handleFilamentOff);
   server.on("/status", handleGetStatus);
   
   server.onNotFound(handleNotFound);
@@ -878,6 +882,8 @@ void handleSetText()
 // ESPHome/Home Assistant compatible endpoints
 void handleFilamentToggle()
 {
+  Serial.println("HTTP GET /filament/toggle - Request received from: " + server.client().remoteIP().toString());
+  
   // Toggle filament state
   setVfdFilament(!getVfdFilamentState());
   
@@ -891,8 +897,44 @@ void handleFilamentToggle()
   server.send(200, "application/json", response);
 }
 
+void handleFilamentOn()
+{
+  Serial.println("HTTP GET /filament/on - Request received from: " + server.client().remoteIP().toString());
+  
+  // Only turn on if currently off
+  if (!getVfdFilamentState()) {
+    setVfdFilament(true);
+  }
+  
+  // Return JSON response
+  String response = "{\"filament_state\":";
+  response += getVfdFilamentState() ? "true" : "false";
+  response += ",\"message\":\"Filament enabled\"}";
+  
+  server.send(200, "application/json", response);
+}
+
+void handleFilamentOff()
+{
+  Serial.println("HTTP GET /filament/off - Request received from: " + server.client().remoteIP().toString());
+  
+  // Only turn off if currently on
+  if (getVfdFilamentState()) {
+    setVfdFilament(false);
+  }
+  
+  // Return JSON response
+  String response = "{\"filament_state\":";
+  response += getVfdFilamentState() ? "true" : "false";
+  response += ",\"message\":\"Filament disabled\"}";
+  
+  server.send(200, "application/json", response);
+}
+
 void handleGetStatus()
 {
+  Serial.println("HTTP GET /status - Request received from: " + server.client().remoteIP().toString());
+  
   // Read current button states
   bool button1State = digitalRead(BUTTON_1_PIN);
   bool button2State = digitalRead(BUTTON_2_PIN);
