@@ -54,6 +54,7 @@ sensor:
       - uptime_ms
       - boost_duty_cycle
       - target_voltage
+      - actual_voltage
       - button1_state
       - button2_state
 
@@ -101,6 +102,11 @@ template:
         
       - name: "VFD Clock Target Voltage"
         state: "{{ state_attr('sensor.vfd_clock_status', 'target_voltage') | default(0) | float }}"
+        unit_of_measurement: "V"
+        device_class: voltage
+        
+      - name: "VFD Clock Actual Voltage"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'actual_voltage') | default(0) | float }}"
         unit_of_measurement: "V"
         device_class: voltage
 

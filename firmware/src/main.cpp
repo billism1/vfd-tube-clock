@@ -111,6 +111,7 @@ const int LED_PWM_DUTY_CYCLE = 10;                                     // 128 = 
 const int VOLTAGE_UPDATE_INTERVAL = 10;                                // Print voltage every 10 checks
 const double VOLTAGE_MULTIPLIER = 390000.0 / 20000.0;                  // Voltage divider ratio based on the resistors used in the voltage divider circuit.
 int voltageUpdateCounter = 0;
+float currentActualVoltage = 0.0;                                       // Current actual voltage reading (calculated from voltage divider)
 
 // Web server configuration
 WebServer server(80);
@@ -564,6 +565,9 @@ int updateBoostDutyCycle(int currentDutyCycle, bool printInfo)
   float voltage = mcp3221.readVoltage();
   float voltageConverted = voltage * VOLTAGE_MULTIPLIER;
   
+  // Store the actual voltage reading in global variable
+  currentActualVoltage = voltageConverted;
+  
   // Adjust duty cycle based on voltage comparison
   int newDuty = currentDutyCycle;
 
@@ -1008,6 +1012,7 @@ void handleGetStatus()
   response += "\"uptime_ms\":" + String(millis()) + ",";
   response += "\"boost_duty_cycle\":" + String(boostDutyCycle) + ",";
   response += "\"target_voltage\":" + String(VBOOST_TARGET_VOLTAGE_V) + ",";
+  response += "\"actual_voltage\":" + String(currentActualVoltage, 2) + ",";
   response += "\"button1_state\":\"" + String(button1State ? "HIGH" : "LOW") + "\",";
   response += "\"button2_state\":\"" + String(button2State ? "HIGH" : "LOW") + "\"";
   response += "}";
