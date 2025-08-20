@@ -48,8 +48,8 @@ const String flashMessages[] = {                                     // Array of
 const int numFlashMessages = sizeof(flashMessages) / sizeof(flashMessages[0]);
 // const unsigned long FLASH_INTERVAL_MIN = 30000;                      // Minimum time between flashes (30 seconds)
 // const unsigned long FLASH_INTERVAL_MAX = 120000;                     // Maximum time between flashes (2 minutes)
-const unsigned long FLASH_INTERVAL_MIN = 7000;                       // Minimum time between flashes (in ms)
-const unsigned long FLASH_INTERVAL_MAX = 15000;                      // Maximum time between flashes (in ms)
+const unsigned long FLASH_INTERVAL_MIN = 10000;                       // Minimum time between flashes (in ms)
+const unsigned long FLASH_INTERVAL_MAX = 25000;                      // Maximum time between flashes (in ms)
 const unsigned long FLASH_DURATION = 500;                            // How long each message is displayed (in ms)
 const unsigned long GLITCH_DURATION = 400;                           // How long the glitch effect lasts (in ms)
 const unsigned long GLITCH_FRAME_TIME = 50;                          // Time between glitch frames (in ms)
@@ -65,6 +65,16 @@ String currentGlitchText = "";                                       // Current 
 
 // VFD tube filament. Used to turn on the VFD tube filament heater. Applies voltage to transistor.
 const int VFD_FILAMENT_PIN = D2;         // D2 pin is GPIO4 on Seeeduino ESP32-C3. Used to turn on the filament current to the VFD.
+bool vfdFilamentEnabled = true;          // VFD filament state (can be controlled via web interface)
+
+// Buttons
+const int BUTTON_1_PIN = D1;             // D1 pin = GPIO3 on Seeeduino ESP32-C3. SW1 tactile momentary switch (connects to ground when pressed)
+const int BUTTON_2_PIN = D0;             // D0 pin = GPIO2 on Seeeduino ESP32-C3. SW2 tactile momentary switch (connects to ground when pressed)
+bool button1LastState = HIGH;           // Previous state of button 1 (HIGH when not pressed, LOW when pressed)
+bool button2LastState = HIGH;           // Previous state of button 2 (HIGH when not pressed, LOW when pressed)
+unsigned long button1LastDebounceTime = 0;  // Last time button 1 state changed
+unsigned long button2LastDebounceTime = 0;  // Last time button 2 state changed
+const unsigned long BUTTON_DEBOUNCE_DELAY = 50;  // Debounce delay in milliseconds
 
 // LED
 const int PWM_LED_INDICATOR_PIN = D6;    // D6 pin is GPIO21 on Seeeduino ESP32-C3. Used for PWM output to the brightness of the indicator LED/
@@ -89,7 +99,7 @@ const int MIN_VBOOST_PWM_DUTY_CYCLE = 5;                               // Minimu
 const int VBOOST_PWM_RESOLUTION = 8;                                   // 8-bit resolution (0-255 values)
 const int VBOOST_PWM_DUTY_MAX_VALUE = pow(2, VBOOST_PWM_RESOLUTION);   // Convert bit resolution to max value (256 for 8-bit resolution)
 const int VBOOST_PWM_FREQUENCY = 25000;                                // Default frequency in Hz
-const float VBOOST_TARGET_VOLTAGE_V = 30;                              // 30 Volts
+const float VBOOST_TARGET_VOLTAGE_V = 27;                              // 27 Volts
 int boostDutyCycle = 110;                                              // Start with moderate duty cycle for IV-21
 
 // Indicator LED PWM configuration.
@@ -101,6 +111,7 @@ const int LED_PWM_DUTY_CYCLE = 10;                                     // 128 = 
 const int VOLTAGE_UPDATE_INTERVAL = 10;                                // Print voltage every 10 checks
 const double VOLTAGE_MULTIPLIER = 390000.0 / 20000.0;                  // Voltage divider ratio based on the resistors used in the voltage divider circuit.
 int voltageUpdateCounter = 0;
+float currentActualVoltage = 0.0;                                       // Current actual voltage reading (calculated from voltage divider)
 
 // Web server configuration
 WebServer server(80);
@@ -158,6 +169,7 @@ MAX6921 vfdDisplay(MAX6921_DIN_PIN, MAX6921_CLK_PIN, MAX6921_LOAD_PIN, DIGIT_PIN
 void initWifi();
 void initTime();
 void initIndicatorLedPwmSignal(int dutyCycle);
+void setIndicatorLedDutyCycle(int dutyCycle);
 void printLocalTime();
 String getFormattedTime();
 
@@ -176,6 +188,17 @@ void updateFlashMessages();
 void scheduleNextFlash();
 String generateGlitchText();
 
+// VFD filament control functions
+void initVfdFilament();
+void setVfdFilament(bool enabled);
+bool getVfdFilamentState();
+
+// Button handling functions
+void initButtons();
+void updateButtons();
+void handleButton1Press();
+void handleButton2Press();
+
 // Web server handlers
 void initWebServer();
 void updateCustomDisplay();
@@ -183,6 +206,15 @@ void handleRoot();
 void handleToggleMode();
 void handleToggleMessageMode();
 void handleSetText();
+#ifdef ENABLE_HOME_ASSISTANT
+void handleFilamentToggle();
+void handleFilamentOn();
+void handleFilamentOff();
+void handleFlashMessagesToggle();
+void handleFlashMessagesOn();
+void handleFlashMessagesOff();
+void handleGetStatus();
+#endif
 void handleNotFound();
 
 void setup()
@@ -210,10 +242,13 @@ void setup()
   Serial.println("Init Web Server...");
   initWebServer();
 
-  // Turn on VFD Filament heater
-  Serial.println("Turning on VFD Filament...");
-  pinMode(VFD_FILAMENT_PIN, OUTPUT);
-  digitalWrite(VFD_FILAMENT_PIN, HIGH); // Turn on the filament (5V before filament resistor) to heat the VFD tube
+  // Initialize VFD Filament control
+  Serial.println("Init VFD Filament control...");
+  initVfdFilament();
+
+  // Initialize buttons
+  Serial.println("Init buttons...");
+  initButtons();
 
   // Initialize I2C with explicit pins
   Serial.println("Init I2C for ADC...");
@@ -238,9 +273,9 @@ void setup()
   Serial.println("Init Flash Messages...");
   initFlashMessages();
 
-  // Init Indicator LED PWM (turn off to indicate setup complete)
-  Serial.println("Init Indicator LED PWM Signal (off)...");
-  initIndicatorLedPwmSignal(0);
+  // Turn off indicator LED to indicate setup complete
+  Serial.println("Turning off Indicator LED (setup complete)...");
+  setIndicatorLedDutyCycle(0);
 
   Serial.println("Setup complete.");
   Serial.print("Web interface available at: http://");
@@ -251,6 +286,9 @@ void loop()
 {
   // Handle web server requests
   server.handleClient();
+  
+  // Update buttons
+  updateButtons();
 
   // Update flash messages (only if enabled and in time mode)
   if (flashMessageMode && isDisplayTimeMode) {
@@ -332,6 +370,18 @@ void initWebServer()
   server.on("/toggle", handleToggleMode);
   server.on("/toggleFlashMessage", handleToggleMessageMode);
   server.on("/settext", HTTP_POST, handleSetText);
+  
+#ifdef ENABLE_HOME_ASSISTANT
+  // Home Assistant compatible endpoints
+  server.on("/filament/toggle", handleFilamentToggle);
+  server.on("/filament/on", handleFilamentOn);
+  server.on("/filament/off", handleFilamentOff);
+  server.on("/flashmessages/toggle", handleFlashMessagesToggle);
+  server.on("/flashmessages/on", handleFlashMessagesOn);
+  server.on("/flashmessages/off", handleFlashMessagesOff);
+  server.on("/status", handleGetStatus);
+#endif
+  
   server.onNotFound(handleNotFound);
   
   // Start the server
@@ -363,19 +413,76 @@ void initADC()
 void initBoostPwmSignal()
 {
   // Set up LEDC PWM using Arduino ESP32 3.x API
-  ledcSetup(PWM_VBOOST_CHANNEL, VBOOST_PWM_FREQUENCY, VBOOST_PWM_RESOLUTION);
+  uint32_t actualBoostPwmFreq = ledcSetup(PWM_VBOOST_CHANNEL, VBOOST_PWM_FREQUENCY, VBOOST_PWM_RESOLUTION);
   ledcAttachPin(PWM_VBOOST_PIN, PWM_VBOOST_CHANNEL);
   // Set initial duty cycle
   ledcWrite(PWM_VBOOST_CHANNEL, boostDutyCycle);
+  
+  // Debug output to verify PWM configuration
+  Serial.print("Boost PWM Channel: ");
+  Serial.println(PWM_VBOOST_CHANNEL);
+  Serial.print("Boost PWM Pin (D7/GPIO20): ");
+  Serial.println(PWM_VBOOST_PIN);
+  Serial.print("Requested frequency: ");
+  Serial.print(VBOOST_PWM_FREQUENCY);
+  Serial.println(" Hz");
+  Serial.print("Actual frequency: ");
+  Serial.print(actualBoostPwmFreq);
+  Serial.println(" Hz");
+  Serial.print("PWM Resolution: ");
+  Serial.print(VBOOST_PWM_RESOLUTION);
+  Serial.println(" bits");
+  Serial.print("Initial duty cycle: ");
+  Serial.print(boostDutyCycle);
+  Serial.print("/");
+  Serial.print(VBOOST_PWM_DUTY_MAX_VALUE - 1);
+  Serial.print(" (");
+  Serial.print((boostDutyCycle * 100.0) / (VBOOST_PWM_DUTY_MAX_VALUE - 1), 1);
+  Serial.println("%)");
 }
 
 void initIndicatorLedPwmSignal(int dutyCycle)
 {
   // Set up LEDC PWM using Arduino ESP32 3.x API
-  ledcSetup(PWM_LED_INDICATOR_CHANNEL, LED_PWM_FREQUENCY_HZ, LED_PWM_BIT_RESOLUTION);
+  uint32_t actualLedPwmFreq = ledcSetup(PWM_LED_INDICATOR_CHANNEL, LED_PWM_FREQUENCY_HZ, LED_PWM_BIT_RESOLUTION);
   ledcAttachPin(PWM_LED_INDICATOR_PIN, PWM_LED_INDICATOR_CHANNEL);
   // Set initial duty cycle
   ledcWrite(PWM_LED_INDICATOR_CHANNEL, dutyCycle);
+
+  // Debug output to verify PWM configuration
+  Serial.print("LED Indicator PWM Channel: ");
+  Serial.println(PWM_LED_INDICATOR_CHANNEL);
+  Serial.print("LED Indicator PWM Pin (D6/GPIO19): ");
+  Serial.println(PWM_LED_INDICATOR_PIN);
+  Serial.print("Requested frequency: ");
+  Serial.print(LED_PWM_FREQUENCY_HZ);
+  Serial.println(" Hz");
+  Serial.print("Actual frequency: ");
+  Serial.print(actualLedPwmFreq);
+  Serial.println(" Hz");
+  Serial.print("PWM Resolution: ");
+  Serial.print(LED_PWM_BIT_RESOLUTION);
+  Serial.println(" bits");
+  Serial.print("Initial duty cycle: ");
+  Serial.print(dutyCycle);
+  Serial.print("/");
+  Serial.print((1 << LED_PWM_BIT_RESOLUTION) - 1);
+  Serial.print(" (");
+  Serial.print((dutyCycle * 100.0) / ((1 << LED_PWM_BIT_RESOLUTION) - 1), 1);
+  Serial.println("%)");
+}
+
+void setIndicatorLedDutyCycle(int dutyCycle)
+{
+  // Only change the duty cycle, don't reconfigure the PWM channel
+  ledcWrite(PWM_LED_INDICATOR_CHANNEL, dutyCycle);
+  Serial.print("LED Indicator duty cycle changed to: ");
+  Serial.print(dutyCycle);
+  Serial.print("/");
+  Serial.print((1 << LED_PWM_BIT_RESOLUTION) - 1);
+  Serial.print(" (");
+  Serial.print((dutyCycle * 100.0) / ((1 << LED_PWM_BIT_RESOLUTION) - 1), 1);
+  Serial.println("%)");
 }
 
 void initFlashMessages()
@@ -519,6 +626,9 @@ int updateBoostDutyCycle(int currentDutyCycle, bool printInfo)
   //uint16_t rawValue = mcp3221.readRaw();
   float voltage = mcp3221.readVoltage();
   float voltageConverted = voltage * VOLTAGE_MULTIPLIER;
+  
+  // Store the actual voltage reading in global variable
+  currentActualVoltage = voltageConverted;
   
   // Adjust duty cycle based on voltage comparison
   int newDuty = currentDutyCycle;
@@ -685,6 +795,121 @@ void updateCustomDisplay()
   }
 }
 
+// VFD filament control functions
+void initVfdFilament()
+{
+  pinMode(VFD_FILAMENT_PIN, OUTPUT);
+  setVfdFilament(vfdFilamentEnabled); // Set initial state
+  Serial.print("VFD filament initialized, state: ");
+  Serial.println(vfdFilamentEnabled ? "ON" : "OFF");
+}
+
+void setVfdFilament(bool enabled)
+{
+  vfdFilamentEnabled = enabled;
+  digitalWrite(VFD_FILAMENT_PIN, enabled ? HIGH : LOW);
+  Serial.print("VFD filament turned ");
+  Serial.println(enabled ? "ON" : "OFF");
+}
+
+bool getVfdFilamentState()
+{
+  return vfdFilamentEnabled;
+}
+
+// Button handling functions
+void initButtons()
+{
+  pinMode(BUTTON_1_PIN, INPUT_PULLUP); // Enable internal pull-up resistor
+  pinMode(BUTTON_2_PIN, INPUT_PULLUP); // Enable internal pull-up resistor
+  
+  // Read initial button states
+  button1LastState = digitalRead(BUTTON_1_PIN);
+  button2LastState = digitalRead(BUTTON_2_PIN);
+  
+  Serial.println("Buttons initialized with pull-up resistors");
+}
+
+void updateButtons()
+{
+  unsigned long currentTime = millis();
+  
+  // Read current button states
+  bool button1CurrentState = digitalRead(BUTTON_1_PIN);
+  bool button2CurrentState = digitalRead(BUTTON_2_PIN);
+  
+  // Debug: Print button states occasionally (every 5 seconds)
+  static unsigned long lastDebugPrint = 0;
+  if (currentTime - lastDebugPrint > 5000) {
+    Serial.print("Button states - B1: ");
+    Serial.print(button1CurrentState ? "HIGH" : "LOW");
+    Serial.print(", B2: ");
+    Serial.println(button2CurrentState ? "HIGH" : "LOW");
+    lastDebugPrint = currentTime;
+  }
+  
+  // Handle Button 1
+  if (button1CurrentState != button1LastState) {
+    button1LastDebounceTime = currentTime;
+    Serial.print("Button 1 state changed to: ");
+    Serial.println(button1CurrentState ? "HIGH" : "LOW");
+  }
+  
+  if ((currentTime - button1LastDebounceTime) > BUTTON_DEBOUNCE_DELAY) {
+    if (button1CurrentState == LOW && button1LastState == HIGH) {
+      // Button 1 was just pressed (transition from HIGH to LOW)
+      handleButton1Press();
+    }
+  }
+  button1LastState = button1CurrentState;
+  
+  // Handle Button 2
+  if (button2CurrentState != button2LastState) {
+    button2LastDebounceTime = currentTime;
+    Serial.print("Button 2 state changed to: ");
+    Serial.println(button2CurrentState ? "HIGH" : "LOW");
+  }
+  
+  if ((currentTime - button2LastDebounceTime) > BUTTON_DEBOUNCE_DELAY) {
+    if (button2CurrentState == LOW && button2LastState == HIGH) {
+      // Button 2 was just pressed (transition from HIGH to LOW)
+      handleButton2Press();
+    }
+  }
+  button2LastState = button2CurrentState;
+}
+
+void handleButton1Press()
+{
+  Serial.println("Button 1 pressed!");
+  
+  // TODO: Add your custom functionality for Button 1 here
+  // Example possibilities:
+  // - Toggle display mode
+  // - Cycle through brightness levels
+  // - Toggle flash messages
+  // - Enter configuration mode
+  
+  // For now, let's toggle the filament as an example
+  setVfdFilament(!getVfdFilamentState());
+}
+
+void handleButton2Press()
+{
+  Serial.println("Button 2 pressed!");
+  
+  // TODO: Add your custom functionality for Button 2 here
+  // Example possibilities:
+  // - Toggle between time and custom text
+  // - Cycle through different flash message sets
+  // - Adjust voltage target
+  // - Reset to defaults
+  
+  // For now, let's toggle the display mode as an example
+  isDisplayTimeMode = !isDisplayTimeMode;
+  Serial.println("Display mode toggled to: " + String(isDisplayTimeMode ? "Time" : "Custom"));
+}
+
 // Web server handlers - Comrade VFD Clock Control Interface
 void handleRoot()
 {
@@ -725,6 +950,139 @@ void handleSetText()
   server.sendHeader("Location", "/");
   server.send(302, "text/plain", "");
 }
+
+#ifdef ENABLE_HOME_ASSISTANT
+// Home Assistant compatible endpoints
+void handleFilamentToggle()
+{
+  Serial.println("HTTP GET /filament/toggle - Request received from: " + server.client().remoteIP().toString());
+  
+  // Toggle filament state
+  setVfdFilament(!getVfdFilamentState());
+  
+  // Return JSON response for Home Assistant compatibility
+  String response = "{\"filament_state\":";
+  response += getVfdFilamentState() ? "true" : "false";
+  response += ",\"message\":\"Filament ";
+  response += getVfdFilamentState() ? "enabled" : "disabled";
+  response += "\"}";
+  
+  server.send(200, "application/json", response);
+}
+
+void handleFilamentOn()
+{
+  Serial.println("HTTP GET /filament/on - Request received from: " + server.client().remoteIP().toString());
+  
+  // Only turn on if currently off
+  if (!getVfdFilamentState()) {
+    setVfdFilament(true);
+  }
+  
+  // Return JSON response
+  String response = "{\"filament_state\":";
+  response += getVfdFilamentState() ? "true" : "false";
+  response += ",\"message\":\"Filament enabled\"}";
+  
+  server.send(200, "application/json", response);
+}
+
+void handleFilamentOff()
+{
+  Serial.println("HTTP GET /filament/off - Request received from: " + server.client().remoteIP().toString());
+  
+  // Only turn off if currently on
+  if (getVfdFilamentState()) {
+    setVfdFilament(false);
+  }
+  
+  // Return JSON response
+  String response = "{\"filament_state\":";
+  response += getVfdFilamentState() ? "true" : "false";
+  response += ",\"message\":\"Filament disabled\"}";
+  
+  server.send(200, "application/json", response);
+}
+
+void handleFlashMessagesToggle()
+{
+  Serial.println("HTTP GET /flashmessages/toggle - Request received from: " + server.client().remoteIP().toString());
+  
+  // Toggle flash messages state
+  flashMessageMode = !flashMessageMode;
+  
+  // Return JSON response for Home Assistant compatibility
+  String response = "{\"flash_messages_enabled\":";
+  response += flashMessageMode ? "true" : "false";
+  response += ",\"message\":\"Flash messages ";
+  response += flashMessageMode ? "enabled" : "disabled";
+  response += "\"}";
+  
+  server.send(200, "application/json", response);
+}
+
+void handleFlashMessagesOn()
+{
+  Serial.println("HTTP GET /flashmessages/on - Request received from: " + server.client().remoteIP().toString());
+  
+  // Only turn on if currently off
+  if (!flashMessageMode) {
+    flashMessageMode = true;
+  }
+  
+  // Return JSON response
+  String response = "{\"flash_messages_enabled\":";
+  response += flashMessageMode ? "true" : "false";
+  response += ",\"message\":\"Flash messages enabled\"}";
+  
+  server.send(200, "application/json", response);
+}
+
+void handleFlashMessagesOff()
+{
+  Serial.println("HTTP GET /flashmessages/off - Request received from: " + server.client().remoteIP().toString());
+  
+  // Only turn off if currently on
+  if (flashMessageMode) {
+    flashMessageMode = false;
+  }
+  
+  // Return JSON response
+  String response = "{\"flash_messages_enabled\":";
+  response += flashMessageMode ? "true" : "false";
+  response += ",\"message\":\"Flash messages disabled\"}";
+  
+  server.send(200, "application/json", response);
+}
+
+void handleGetStatus()
+{
+  Serial.println("HTTP GET /status - Request received from: " + server.client().remoteIP().toString());
+  
+  // Read current button states
+  bool button1State = digitalRead(BUTTON_1_PIN);
+  bool button2State = digitalRead(BUTTON_2_PIN);
+  
+  // Return comprehensive status in JSON format for Home Assistant
+  String response = "{";
+  response += "\"filament_state\":" + String(getVfdFilamentState() ? "true" : "false") + ",";
+  response += "\"display_mode\":\"" + String(isDisplayTimeMode ? "time" : "custom") + "\",";
+  response += "\"custom_text\":\"" + customText + "\",";
+  response += "\"flash_messages_enabled\":" + String(flashMessageMode ? "true" : "false") + ",";
+  response += "\"current_time\":\"" + getFormattedTime() + "\",";
+  response += "\"wifi_connected\":" + String(WiFi.status() == WL_CONNECTED ? "true" : "false") + ",";
+  response += "\"ip_address\":\"" + WiFi.localIP().toString() + "\",";
+  response += "\"uptime_ms\":" + String(millis()) + ",";
+  response += "\"boost_duty_cycle\":" + String((boostDutyCycle * 100.0) / (VBOOST_PWM_DUTY_MAX_VALUE - 1), 1) + ",";
+  response += "\"target_voltage\":" + String(VBOOST_TARGET_VOLTAGE_V) + ",";
+  response += "\"actual_voltage\":" + String(currentActualVoltage, 2) + ",";
+  response += "\"button1_state\":\"" + String(button1State ? "HIGH" : "LOW") + "\",";
+  response += "\"button2_state\":\"" + String(button2State ? "HIGH" : "LOW") + "\"";
+  response += "}";
+  
+  server.send(200, "application/json", response);
+}
+#endif
 
 void handleNotFound()
 {

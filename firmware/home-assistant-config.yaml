@@ -1,0 +1,227 @@
+# Home Assistant REST Integration Configuration for VFD Tube Clock
+# Add this to your Home Assistant configuration.yaml file
+# Replace 192.168.86.104 with your VFD clock's actual IP address
+
+# REST Commands for controlling the filament
+rest_command:
+  vfd_clock_filament_on:
+    url: "http://192.168.86.104/filament/on"
+    method: GET
+    timeout: 10
+    
+  vfd_clock_filament_off:
+    url: "http://192.168.86.104/filament/off"
+    method: GET
+    timeout: 10
+    
+  vfd_clock_toggle_filament:
+    url: "http://192.168.86.104/filament/toggle"
+    method: GET
+    timeout: 10
+    
+  vfd_clock_flash_messages_on:
+    url: "http://192.168.86.104/flashmessages/on"
+    method: GET
+    timeout: 10
+    
+  vfd_clock_flash_messages_off:
+    url: "http://192.168.86.104/flashmessages/off"
+    method: GET
+    timeout: 10
+    
+  vfd_clock_toggle_flash_messages:
+    url: "http://192.168.86.104/flashmessages/toggle"
+    method: GET
+    timeout: 10
+
+# REST Sensor for getting clock status
+sensor:
+  - platform: rest
+    name: "VFD Clock Status"
+    resource: "http://192.168.86.104/status"
+    method: GET
+    timeout: 10
+    scan_interval: 5
+    value_template: "{{ 'online' if value_json.wifi_connected else 'offline' }}"
+    json_attributes:
+      - filament_state
+      - display_mode
+      - custom_text
+      - flash_messages_enabled
+      - current_time
+      - wifi_connected
+      - ip_address
+      - uptime_ms
+      - boost_duty_cycle
+      - target_voltage
+      - actual_voltage
+      - button1_state
+      - button2_state
+
+# Template entities based on the REST sensor
+template:
+  - binary_sensor:
+      - name: "VFD Clock Filament"
+        state: "{{ 'on' if (state_attr('sensor.vfd_clock_status', 'filament_state') | default(false)) == true else 'off' }}"
+        device_class: power
+        
+      - name: "VFD Clock WiFi Connected"
+        state: "{{ 'on' if (state_attr('sensor.vfd_clock_status', 'wifi_connected') | default(false)) == true else 'off' }}"
+        device_class: connectivity
+        
+      - name: "VFD Clock Flash Messages Enabled"
+        state: "{{ 'on' if (state_attr('sensor.vfd_clock_status', 'flash_messages_enabled') | default(false)) == true else 'off' }}"
+
+      - name: "VFD Clock Button 1"
+        state: "{{ 'on' if (state_attr('sensor.vfd_clock_status', 'button1_state') | default('HIGH')) == 'LOW' else 'off' }}"
+
+      - name: "VFD Clock Button 2"
+        state: "{{ 'on' if (state_attr('sensor.vfd_clock_status', 'button2_state') | default('HIGH')) == 'LOW' else 'off' }}"
+
+  - sensor:
+      - name: "VFD Clock Current Time"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'current_time') | default('--:--:--') }}"
+        
+      - name: "VFD Clock Display Mode"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'display_mode') | default('unknown') }}"
+        
+      - name: "VFD Clock Custom Text"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'custom_text') | default('') }}"
+        
+      - name: "VFD Clock IP Address"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'ip_address') | default('0.0.0.0') }}"
+        
+      - name: "VFD Clock Uptime"
+        state: "{{ ((state_attr('sensor.vfd_clock_status', 'uptime_ms') | default(0) | int) / 1000) | round(0) }}"
+        unit_of_measurement: "s"
+        device_class: duration
+        
+      - name: "VFD Clock Boost Duty Cycle"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'boost_duty_cycle') | default(0) | int }}"
+        unit_of_measurement: "%"
+        
+      - name: "VFD Clock Target Voltage"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'target_voltage') | default(0) | float }}"
+        unit_of_measurement: "V"
+        device_class: voltage
+        
+      - name: "VFD Clock Actual Voltage"
+        state: "{{ state_attr('sensor.vfd_clock_status', 'actual_voltage') | default(0) | float }}"
+        unit_of_measurement: "V"
+        device_class: voltage
+
+# Template switch for VFD Clock Filament Control
+switch:
+  - platform: template
+    switches:
+      vfd_clock_filament_control:
+        friendly_name: "VFD Clock Filament Control"
+        value_template: "{{ state_attr('sensor.vfd_clock_status', 'filament_state') | bool }}"
+        availability_template: "{{ state_attr('sensor.vfd_clock_status', 'filament_state') is not none }}"
+        icon_template: >-
+          {% if state_attr('sensor.vfd_clock_status', 'filament_state') %}
+            mdi:lightbulb-on
+          {% else %}
+            mdi:lightbulb-off-outline
+          {% endif %}
+        turn_on:
+          - action: rest_command.vfd_clock_filament_on
+          - delay: 2
+          - action: homeassistant.update_entity
+            target:
+              entity_id: sensor.vfd_clock_status
+        turn_off:
+          - action: rest_command.vfd_clock_filament_off
+          - delay: 2
+          - action: homeassistant.update_entity
+            target:
+              entity_id: sensor.vfd_clock_status
+              
+      vfd_clock_flash_messages_control:
+        friendly_name: "VFD Clock Flash Messages Control"
+        value_template: "{{ state_attr('sensor.vfd_clock_status', 'flash_messages_enabled') | bool }}"
+        availability_template: "{{ state_attr('sensor.vfd_clock_status', 'flash_messages_enabled') is not none }}"
+        icon_template: >-
+          {% if state_attr('sensor.vfd_clock_status', 'flash_messages_enabled') %}
+            mdi:message-flash
+          {% else %}
+            mdi:message-flash-outline
+          {% endif %}
+        turn_on:
+          - action: rest_command.vfd_clock_flash_messages_on
+          - delay: 2
+          - action: homeassistant.update_entity
+            target:
+              entity_id: sensor.vfd_clock_status
+        turn_off:
+          - action: rest_command.vfd_clock_flash_messages_off
+          - delay: 2
+          - action: homeassistant.update_entity
+            target:
+              entity_id: sensor.vfd_clock_status
+
+# Optional automation examples:
+automation:
+  - alias: "VFD Clock - Turn off at night"
+    trigger:
+      platform: time
+      at: "23:00:00"
+    condition:
+      condition: state
+      entity_id: binary_sensor.vfd_clock_filament
+      state: "on"
+    action:
+      action: switch.turn_off
+      target:
+        entity_id: switch.vfd_clock_filament_control
+
+  - alias: "VFD Clock - Turn on in morning"
+    trigger:
+      platform: time
+      at: "07:00:00"
+    condition:
+      condition: state
+      entity_id: binary_sensor.vfd_clock_filament
+      state: "off"
+    action:
+      action: switch.turn_on
+      target:
+        entity_id: switch.vfd_clock_filament_control
+
+  - alias: "VFD Clock - Notify if offline"
+    trigger:
+      platform: state
+      entity_id: binary_sensor.vfd_clock_wifi_connected
+      to: "off"
+      for: "00:05:00"  # Wait 5 minutes before alerting
+    action:
+      action: notify.persistent_notification
+      data:
+        message: "VFD Clock appears to be offline or disconnected from WiFi"
+        title: "VFD Clock Offline"
+
+  - alias: "VFD Clock - Disable flash messages at night"
+    trigger:
+      platform: time
+      at: "22:00:00"
+    condition:
+      condition: state
+      entity_id: binary_sensor.vfd_clock_flash_messages_enabled
+      state: "on"
+    action:
+      action: switch.turn_off
+      target:
+        entity_id: switch.vfd_clock_flash_messages_control
+
+  - alias: "VFD Clock - Enable flash messages in morning"
+    trigger:
+      platform: time
+      at: "08:00:00"
+    condition:
+      condition: state
+      entity_id: binary_sensor.vfd_clock_flash_messages_enabled
+      state: "off"
+    action:
+      action: switch.turn_on
+      target:
+        entity_id: switch.vfd_clock_flash_messages_control
