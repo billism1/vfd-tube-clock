@@ -65,7 +65,7 @@ String currentGlitchText = "";                                       // Current 
 
 // VFD tube filament. Used to turn on the VFD tube filament heater. Applies voltage to transistor.
 const int VFD_FILAMENT_PIN = D2;         // D2 pin is GPIO4 on Seeeduino ESP32-C3. Used to turn on the filament current to the VFD.
-bool vfdFilamentEnabled = true;          // VFD filament state (can be controlled via Home Assistant/ESPHome)
+bool vfdFilamentEnabled = true;          // VFD filament state (can be controlled via web interface)
 
 // Buttons
 const int BUTTON_1_PIN = D1;             // D1 pin = GPIO3 on Seeeduino ESP32-C3. SW1 tactile momentary switch (connects to ground when pressed)
@@ -206,6 +206,7 @@ void handleRoot();
 void handleToggleMode();
 void handleToggleMessageMode();
 void handleSetText();
+#ifdef ENABLE_HOME_ASSISTANT
 void handleFilamentToggle();
 void handleFilamentOn();
 void handleFilamentOff();
@@ -213,6 +214,7 @@ void handleFlashMessagesToggle();
 void handleFlashMessagesOn();
 void handleFlashMessagesOff();
 void handleGetStatus();
+#endif
 void handleNotFound();
 
 void setup()
@@ -369,7 +371,8 @@ void initWebServer()
   server.on("/toggleFlashMessage", handleToggleMessageMode);
   server.on("/settext", HTTP_POST, handleSetText);
   
-  // ESPHome/Home Assistant compatible endpoints
+#ifdef ENABLE_HOME_ASSISTANT
+  // Home Assistant compatible endpoints
   server.on("/filament/toggle", handleFilamentToggle);
   server.on("/filament/on", handleFilamentOn);
   server.on("/filament/off", handleFilamentOff);
@@ -377,6 +380,7 @@ void initWebServer()
   server.on("/flashmessages/on", handleFlashMessagesOn);
   server.on("/flashmessages/off", handleFlashMessagesOff);
   server.on("/status", handleGetStatus);
+#endif
   
   server.onNotFound(handleNotFound);
   
@@ -947,7 +951,8 @@ void handleSetText()
   server.send(302, "text/plain", "");
 }
 
-// ESPHome/Home Assistant compatible endpoints
+#ifdef ENABLE_HOME_ASSISTANT
+// Home Assistant compatible endpoints
 void handleFilamentToggle()
 {
   Serial.println("HTTP GET /filament/toggle - Request received from: " + server.client().remoteIP().toString());
@@ -1058,7 +1063,7 @@ void handleGetStatus()
   bool button1State = digitalRead(BUTTON_1_PIN);
   bool button2State = digitalRead(BUTTON_2_PIN);
   
-  // Return comprehensive status in JSON format for Home Assistant/ESPHome
+  // Return comprehensive status in JSON format for Home Assistant
   String response = "{";
   response += "\"filament_state\":" + String(getVfdFilamentState() ? "true" : "false") + ",";
   response += "\"display_mode\":\"" + String(isDisplayTimeMode ? "time" : "custom") + "\",";
@@ -1077,6 +1082,7 @@ void handleGetStatus()
   
   server.send(200, "application/json", response);
 }
+#endif
 
 void handleNotFound()
 {
